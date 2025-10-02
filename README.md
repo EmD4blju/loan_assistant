@@ -1,0 +1,1 @@
+# Loan assistant application
