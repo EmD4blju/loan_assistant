@@ -1,4 +1,4 @@
-# Loan assistant application
+# Loan assistant
 
 This application lets you assess your loan approval chances from home—instantly providing a clear probability of success and tailored recommendations to strengthen your application when the odds are low. Behind the scenes, it analyzes key financial and personal indicators using machine learning to highlight the factors most influencing your outcome. You receive practical, prioritized guidance so each improvement cycle meaningfully boosts your likelihood of approval.
 
@@ -35,3 +35,4 @@ As a buyer seeking financing for a high-value (but mainstream) performance car, 
 
 **Outcome**<br>
 Instead of guessing or risking a hard inquiry with mediocre odds, John leaves with a structured improvement roadmap, a higher projected approval path, and clarity on when to formally apply.
+
