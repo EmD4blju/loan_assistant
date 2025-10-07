@@ -36,3 +36,6 @@ As a buyer seeking financing for a high-value (but mainstream) performance car, 
 **Outcome**<br>
 Instead of guessing or risking a hard inquiry with mediocre odds, John leaves with a structured improvement roadmap, a higher projected approval path, and clarity on when to formally apply.
 
+## Dependencies
+
+[Loan Approval Classification Data](https://www.kaggle.com/datasets/taweilo/loan-approval-classification-data) - _Ta-wei Lo_
