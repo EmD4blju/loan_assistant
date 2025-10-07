@@ -1,10 +1,45 @@
 import streamlit as st
+from components.main_page import render_main_page
+from components.steps import render_step_1, render_step_2
+    
+    
+
     
 def main():
-    st.title("Loan Assistant", width="content")
-    st.write("Welcome to the Loan Assistant! This application helps you determine your eligibility for a loan based on various financial and personal factors. Please provide the necessary information, and we'll guide you through the process.")
-    st.button("Get Started!", icon="🚀")
+    st.set_page_config(page_title='Loan Assistant', layout='centered', page_icon='🤖')
+    
+    
+    if 'step' not in st.session_state:
+        st.session_state.step = 0
+        
+    if 'user_data' not in st.session_state:
+        st.session_state.user_data = {}
+ 
+        
+
+    match st.session_state.step:
+        
+        #~ Main page
+        case 0:
+            render_main_page()
+        
+        #~ Loan amount information   
+        case 1:
+            render_step_1()
+        
+        #~ Personal information 
+        case 2:
+            render_step_2()
+            
+        #TODO: Further form  
+        
+        #! DEBUG  
+        case _: 
+            st.json(body=st.session_state.user_data)
+    
 
 
-if __name__ == "__main__":
+
+
+if __name__ == '__main__':
     main()
