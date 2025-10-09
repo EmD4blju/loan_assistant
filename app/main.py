@@ -1,6 +1,5 @@
 import streamlit as st
-from components.main_page import render_main_page
-from components.steps import render_step_1, render_step_2
+from components import render_main_page, render_step_1, render_step_2
     
     
 
