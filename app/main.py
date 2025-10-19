@@ -9,7 +9,7 @@ def main():
         st.session_state.step = 0
 
     if 'user_data' not in st.session_state:
-        st.session_state.user_data = {}
+        st.session_state.user_data = None
 
     if 'user_credits' not in st.session_state:
         st.session_state.user_credits = []
@@ -29,11 +29,12 @@ def main():
 
             # ~ Personal information
         case 2:
-            render_profile()
-            render_credits()
-            render_credit_addition()
-
-
+            credits_tab,profile_tab = st.tabs(['Credits','Profile'])
+            with credits_tab:
+                render_credits()
+                render_credit_addition()
+            with profile_tab:
+                render_profile()
 
 
 if __name__ == '__main__':
