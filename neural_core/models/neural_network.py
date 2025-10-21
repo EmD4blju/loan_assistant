@@ -7,11 +7,11 @@ from typing import override
 class BaseLoanNN(nn.Module):
     """ A base neural network class for loan prediction tasks.
     """
-    def __init__(self, *args, **kwargs):
+    def __init__(self, input_size: int = 13, hidden_size: int = 50, output_size: int = 1):
         super().__init__()
-        self.layer_1 = nn.Linear(13, 50)  # Example layers
-        self.layer_2 = nn.Linear(50, 20)   # Example layers
-        self.output_layer = nn.Linear(20, 1)  # Example layers
+        self.layer_1 = nn.Linear(input_size, hidden_size)
+        self.layer_2 = nn.Linear(hidden_size, hidden_size)
+        self.output_layer = nn.Linear(hidden_size, output_size)
     
     @override
     def forward(self, x):
@@ -19,6 +19,7 @@ class BaseLoanNN(nn.Module):
         x = F.relu(self.layer_2(x))
         x = self.output_layer(x)
         return x
+    
     
     @override
     def __str__(self):

@@ -3,7 +3,7 @@ import pandas as pd
 from torch.utils.data import Dataset
 from torch import tensor
 import torch
-from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import LabelEncoder, StandardScaler
 import pandas as pd
 from pathlib import Path
 
@@ -61,17 +61,21 @@ class DataFrameDataset(Dataset):
         df_balanced = df_balanced.sample(frac=1, random_state=42).reset_index(drop=True)
         df = df_balanced
         
-        #~ Encode categorical variables
-        encoder = LabelEncoder()
-        df['person_gender'] = encoder.fit_transform(df['person_gender'])
-        df['person_education'] = encoder.fit_transform(df['person_education'])
-        df['person_home_ownership'] = encoder.fit_transform(df['person_home_ownership'])
-        df['loan_intent'] = encoder.fit_transform(df['loan_intent'])
-        df['previous_loan_defaults_on_file'] = encoder.fit_transform(df['previous_loan_defaults_on_file'])
-        
         #~ Remove anomalies
         Q1 = df['person_age'].quantile(0.25)
         Q3 = df['person_age'].quantile(0.975) # Using 97.5 percentile to retain more data (up to 70 years old)
         IQR = Q3 - Q1
-        df = df[(df['person_age'] >= Q1 - 1.5 * IQR) & (df['person_age'] <= Q3 + 1.5 * IQR)]
+        df = df[(df['person_age'] >= Q1 - 1.5 * IQR) & (df['person_age'] <= Q3 + 1.5 * IQR)].copy()
+        
+        #~ Encode categorical variables
+        encoder = LabelEncoder()
+        categorical_features = ['person_gender', 'person_education', 'person_home_ownership', 'loan_intent', 'previous_loan_defaults_on_file']
+        for feature in categorical_features:
+            df[feature] = encoder.fit_transform(df[feature])
+        
+        #~ Standardize numerical features
+        numeric_features = ['person_age', 'person_income', 'loan_amnt', 'loan_int_rate', 'loan_percent_income', 'cb_person_cred_hist_length', 'person_emp_exp', 'credit_score']
+        scaler = StandardScaler()
+        df[numeric_features] = scaler.fit_transform(df[numeric_features])
+        
         return df
