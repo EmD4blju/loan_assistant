@@ -23,6 +23,7 @@ build/
 
 # Logs
 *.log
+logs/
 
 # Database
 *.sqlite3
