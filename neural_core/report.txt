@@ -1,0 +1,10 @@
+Best Hyperparameters:
+  hidden_size: 32
+  lr: 0.013810342438161323
+  batch_size: 32
+Best Validation BCE: 0.2412
+
+Final Evaluation Results:
+Average Train BCE: 0.2352
+Average Validation BCE: 0.2538
+Average Test BCE: 0.2435
