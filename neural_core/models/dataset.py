@@ -6,7 +6,9 @@ import torch
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 import pandas as pd
 from pathlib import Path
+from logging import getLogger
 
+log = getLogger(__name__)
 
 class DataFrameDataset(Dataset):
     """ A PyTorch Dataset class for loading data from a pandas DataFrame.
@@ -54,6 +56,7 @@ class DataFrameDataset(Dataset):
             pd.DataFrame: Cleaned dataframe.
         """
         #~ Undersampling by loan status
+        log.debug("Undersampling data by loan status.")
         df_yes = df[df['loan_status'] == 1]
         df_no = df[df['loan_status'] == 0]
         df_no_sampled = df_no.sample(n=len(df_yes))
@@ -62,20 +65,24 @@ class DataFrameDataset(Dataset):
         df = df_balanced
         
         #~ Remove anomalies
+        log.debug("Removing anomalies from 'person_age'.")
         Q1 = df['person_age'].quantile(0.25)
         Q3 = df['person_age'].quantile(0.975) # Using 97.5 percentile to retain more data (up to 70 years old)
         IQR = Q3 - Q1
         df = df[(df['person_age'] >= Q1 - 1.5 * IQR) & (df['person_age'] <= Q3 + 1.5 * IQR)].copy()
         
         #~ Encode categorical variables
+        log.debug("Encoding categorical variables.")
         encoder = LabelEncoder()
         categorical_features = ['person_gender', 'person_education', 'person_home_ownership', 'loan_intent', 'previous_loan_defaults_on_file']
         for feature in categorical_features:
             df[feature] = encoder.fit_transform(df[feature])
         
         #~ Standardize numerical features
+        log.debug("Standardizing numerical features.")
         numeric_features = ['person_age', 'person_income', 'loan_amnt', 'loan_int_rate', 'loan_percent_income', 'cb_person_cred_hist_length', 'person_emp_exp', 'credit_score']
         scaler = StandardScaler()
         df[numeric_features] = scaler.fit_transform(df[numeric_features])
         
+        log.debug("Data cleaning finished.")
         return df
