@@ -27,15 +27,22 @@ def main():
     log.info("Starting hyperparameter tuning...")
     def objective(trial):
             input_size = len(dataset.feature_columns)
-            hidden_size_1 = trial.suggest_int('hidden_size_1', 32, 128)
-            hidden_size_2 = trial.suggest_int('hidden_size_2', 32, 128)
-            lr = trial.suggest_float('lr', 1e-5, 1e-1, log=True)
+            num_hidden_layers = trial.suggest_int('num_hidden_layers', 1, 5)
             
-            model = BaseLoanNN(input_size=input_size, hidden_size_1=hidden_size_1, hidden_size_2=hidden_size_2, output_size=1)
+            hidden_layers = nn.ModuleList()
+            last_dim = input_size
+            for i in range(num_hidden_layers):
+                hidden_dim = trial.suggest_int(f'hidden_dim_{i}', 32, 128)
+                hidden_layers.append(nn.Linear(last_dim, hidden_dim))
+                last_dim = hidden_dim
+            
+            lr = trial.suggest_float('lr', 1e-5, 1e-1, log=True)
+            epochs = trial.suggest_int('epochs', 10, 50)
+            
+            model = BaseLoanNN(input_size=input_size, hidden_layers=hidden_layers, output_size=1)
             optimizer = Adam(model.parameters(), lr=lr)
             criterion = nn.BCEWithLogitsLoss()
 
-            epochs = 30
             arena = Arena(model, optimizer, criterion, dataset, enable_validation=True)
             arena.train(epochs=epochs, batch_size=32)
             
@@ -50,7 +57,15 @@ def main():
     #~ Initialize model, optimizer, and criterion with best params
     log.info("Initializing model with best hyperparameters...")
     input_size = len(dataset.feature_columns)
-    model = BaseLoanNN(input_size=input_size, hidden_size_1=best_params['hidden_size_1'], hidden_size_2=best_params['hidden_size_2'], output_size=1)
+    
+    hidden_layers = nn.ModuleList()
+    last_dim = input_size
+    for i in range(best_params['num_hidden_layers']):
+        hidden_dim = best_params[f'hidden_dim_{i}']
+        hidden_layers.append(nn.Linear(last_dim, hidden_dim))
+        last_dim = hidden_dim
+        
+    model = BaseLoanNN(input_size=input_size, hidden_layers=hidden_layers, output_size=1)
     optimizer = Adam(model.parameters(), lr=best_params['lr'])
     criterion = torch.nn.BCEWithLogitsLoss()
     log.info("Model initialized.")
@@ -60,7 +75,7 @@ def main():
     
     #~ Train the final model
     log.info("Starting final training with best hyperparameters...")
-    arena.train(epochs=30, batch_size=32)
+    arena.train(epochs=best_params['epochs'], batch_size=32)
     log.info("Training finished.")
     
     #~ Evaluate the model
