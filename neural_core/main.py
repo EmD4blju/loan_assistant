@@ -11,6 +11,7 @@ from tools.log_controller import LogController
 
 log = getLogger(__name__)
 
+
 def main():
     log_controller = LogController(config_path=Path(__file__).parent / 'config' / 'logging_config.json', dirs=Path(__file__).parent / 'logs')
     log_controller.start()

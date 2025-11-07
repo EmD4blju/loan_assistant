@@ -17,7 +17,7 @@
       "class": "logging.handlers.RotatingFileHandler",
       "level": "DEBUG",
       "formatter": "default_formatter",
-      "filename": "neural_core/logs/app.log",
+      "filename": "logs/app.log",
       "maxBytes": 10485760,
       "backupCount": 5,
       "encoding": "utf8"
