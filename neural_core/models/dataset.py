@@ -7,6 +7,7 @@ from sklearn.preprocessing import LabelEncoder, StandardScaler
 import pandas as pd
 from pathlib import Path
 from logging import getLogger
+import joblib
 
 log = getLogger(__name__)
 
@@ -73,16 +74,22 @@ class DataFrameDataset(Dataset):
         
         #~ Encode categorical variables
         log.debug("Encoding categorical variables.")
-        encoder = LabelEncoder()
+        
+        encoders = {}
         categorical_features = ['person_gender', 'person_education', 'person_home_ownership', 'loan_intent', 'previous_loan_defaults_on_file']
         for feature in categorical_features:
+            encoder = LabelEncoder()
             df[feature] = encoder.fit_transform(df[feature])
+            encoders[feature] = encoder
+        print()
+        joblib.dump(encoders, Path(__file__).parent.parent.parent / 'app' / 'agent' / 'modules' / 'categorical_encoders.joblib')
         
         #~ Standardize numerical features
         log.debug("Standardizing numerical features.")
         numeric_features = ['person_age', 'person_income', 'loan_amnt', 'loan_int_rate', 'loan_percent_income', 'cb_person_cred_hist_length', 'person_emp_exp', 'credit_score']
         scaler = StandardScaler()
         df[numeric_features] = scaler.fit_transform(df[numeric_features])
+        joblib.dump(scaler, Path(__file__).parent.parent.parent / 'app' / 'agent' / 'modules' / 'numeric_scaler.joblib')
         
         log.debug("Data cleaning finished.")
         return df

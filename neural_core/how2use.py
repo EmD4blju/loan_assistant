@@ -23,7 +23,7 @@ def load_model(model_path:Path, input_size:int, hidden_layers:nn.ModuleList, out
 
 
 if __name__ == "__main__":
-    model = load_model(Path('neural_core/model.pth'), input_size=13, hidden_layers=nn.ModuleList([nn.Linear(13, 64)]), output_size=1)
+    model = load_model(Path('app/agent/modules/model.pth'), input_size=13, hidden_layers=nn.ModuleList([nn.Linear(13, 64)]), output_size=1)
     print("Model loaded successfully.")
     # Get some sample data
     dataset = DataFrameDataset.from_csv(Path(__file__).parent / 'repo' / 'loan_data.csv', target_column='loan_status')
