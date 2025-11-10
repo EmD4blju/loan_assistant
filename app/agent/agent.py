@@ -50,7 +50,7 @@ class Agent():
     def _loan_confidence_estimation(self, state: AgentState) -> dict:
         with torch.no_grad():
             output = self.model(state["features"])
-        state['loan_confidence'] = torch.sigmoid(output).item()
+        state['loan_confidence'] = f'{torch.sigmoid(output).item() * 100:.2f}'
         return state
     
 if __name__ == "__main__":
