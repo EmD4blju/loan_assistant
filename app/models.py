@@ -95,18 +95,28 @@ class RadarChart:
         return st.session_state.loan_data
 
 class GaugeChart:
-    def __init__(self):
+    def __init__(self,size=(300,300),margin=2):
         self.fig = None
+        self.width = size[0]
+        self.height = size[1]
+        self.margin = margin
 
     def build(self,value,label=""):
         fig = go.Figure(GaugeChart._initilize_pie(value))
-        fig = GaugeChart._add_labels(fig,value,label)
+        fig = self._add_labels(fig,value,label)
         fig.update_traces(hoverinfo='none')
         fig.update_layout(showlegend=False)
         self.fig = fig
 
-    def render(self):
-        st.plotly_chart(self.fig, use_container_width=True)
+    def render(self,force_size=False):
+        if force_size:
+            st.plotly_chart(
+                self.fig,
+                use_container_width=False,
+                config={"displayModeBar": False}
+            )
+        else:
+            st.plotly_chart(self.fig, use_container_width=True)
         return self.fig
 
     @staticmethod
@@ -132,20 +142,21 @@ class GaugeChart:
             showlegend=False
         )
 
-    @staticmethod
-    def _add_labels(fig, value, label):
+
+    def _add_labels(self,fig, value, label):
         fig.update_layout(
             annotations=[
                 dict(x=0.5, y=0.5, xref='paper', yref='paper',
-                     text=f"<b>{value}</b>", showarrow=False,
-                     font=dict(size=108, color="white")),
+                     text=f"<b>{value}%</b>", showarrow=False,
+                     font=dict(size=54, color="white")),
                 dict(x=0.5, y=0.1, xref='paper', yref='paper',
                      text=label, showarrow=False,
-                     font=dict(size=42, color="white"))
+                     font=dict(size=24, color="white"))
             ],
-            margin=dict(l=20, r=20, t=60, b=20),
+            margin=dict(l=self.margin, r=self.margin, t=self.margin, b=self.margin),
             paper_bgcolor='rgba(0,0,0,0)',
             plot_bgcolor='rgba(0,0,0,0)',
-            height=450,
+            height=self.height,
+            width=self.width
         )
         return fig

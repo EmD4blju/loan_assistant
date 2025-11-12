@@ -1,3 +1,5 @@
+import random
+
 import streamlit as st
 from models import Credit, Profile, RadarChart, GaugeChart
 
@@ -136,14 +138,20 @@ def render_profile():
 def render_credits():
     for credit in st.session_state.user_credits:
         with st.container(border=True):
-            st.title(credit.name)
-            st.metric(label="Intent", value=credit.intent, delta=None)
+            col_left,col_right = st.columns(2)
+            with col_left:
+                st.title(credit.name)
+                st.metric(label="Intent", value=credit.intent, delta=None)
+            with col_right:
+                with st.container(border=False, horizontal_alignment='center', horizontal=True):
+                    gauge = GaugeChart(size=(225, 225))
+                    gauge.build(random.choice([36, 72, 18, 95]), label="chance")
+                    gauge.render(force_size=True)
             col1,col2 = st.columns(2)
             with col1:
                 st.metric(label="Amount",value=f'${credit.amount}',delta=None,border=True)
             with col2:
                 st.metric(label="Interest Rate",value=f'{credit.int_rate}%',delta=None,border=True)
-        GaugeChart().render()
 
 
 def render_credit_addition():
