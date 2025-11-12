@@ -1,6 +1,7 @@
 import streamlit as st
-from components import render_main_page, render_profile_form, render_profile, render_credits, render_credit_addition
+from components import render_main_page, render_profile_form, render_profile, render_all_credits, render_credit_addition, render_advices
 from agent.agent import Agent
+
 
 def main():
     st.set_page_config(page_title='Loan Assistant', layout='centered', page_icon='🤖')
@@ -20,6 +21,9 @@ def main():
     if 'agent' not in st.session_state:
         st.session_state.agent = Agent()
 
+    if 'chart_key' not in st.session_state:
+        st.session_state.chart_key = 0
+
     match st.session_state.step:
 
         # ~ Main page
@@ -32,12 +36,14 @@ def main():
 
             # ~ Personal information
         case 2:
-            credits_tab, profile_tab = st.tabs(['Credits', 'Profile'])
+            credits_tab, profile_tab, advice_tab = st.tabs(['Credits', 'Profile', 'Advices'])
             with credits_tab:
-                render_credits()
+                render_all_credits()
                 render_credit_addition()
             with profile_tab:
                 render_profile()
+            with advice_tab:
+                render_advices()
 
 
 if __name__ == '__main__':
