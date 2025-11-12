@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "disable_existing_loggers": false,
+  "formatters": {
+    "default_formatter": {
+      "format": "%(asctime)s - %(levelname)s - %(name)s:%(lineno)d - %(message)s"
+    }
+  },
+  "handlers": {
+    "console_handler": {
+      "class": "logging.StreamHandler",
+      "level": "INFO",
+      "formatter": "default_formatter",
+      "stream": "ext://sys.stdout"
+    },
+    "file_handler": {
+      "class": "logging.handlers.RotatingFileHandler",
+      "level": "DEBUG",
+      "formatter": "default_formatter",
+      "filename": "logs/app.log",
+      "maxBytes": 10485760,
+      "backupCount": 5,
+      "encoding": "utf8"
+    }
+  },
+  "loggers": {
+    "__main__": {
+      "level": "DEBUG",
+      "handlers": ["console_handler", "file_handler"],
+      "propagate": false
+    },
+    "models.arena": {
+      "level": "DEBUG",
+      "handlers": ["console_handler", "file_handler"],
+      "propagate": false
+    },
+    "models.dataset": {
+      "level": "DEBUG",
+      "handlers": ["console_handler", "file_handler"],
+      "propagate": false
+    },
+    "models.neural_network": {
+      "level": "DEBUG",
+      "handlers": ["console_handler", "file_handler"],
+      "propagate": false
+    }
+  }
+}
