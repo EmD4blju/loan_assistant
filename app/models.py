@@ -1,9 +1,11 @@
+import uuid
 from pathlib import Path
-
+from agent.agent import Agent
 import plotly.express as px
 import pandas as pd
 import streamlit as st
 import plotly.graph_objects as go
+from matplotlib import pyplot as plt
 
 
 class Credit:
@@ -51,11 +53,11 @@ class Profile:
 
     @staticmethod
     def education_values() -> list:
-        return ["Associate", "Bachelor", "Doctorate", "High School", "Master"]
+        return ["High School", "Associate", "Bachelor", "Master", "Doctorate"]
 
     @staticmethod
     def home_ownership_values() -> list:
-        return ["MORTGAGE", "OWN", "RENT", "OTHER"]
+        return ["RENT", "MORTGAGE", "OWN", "OTHER"]
 
 
 class RadarChart:
@@ -80,7 +82,9 @@ class RadarChart:
         df = pd.DataFrame(dict(r=self.r, theta=self.theta))
         self.fig = px.line_polar(df, r='r', theta='theta', line_close=True)
         self.fig.update_traces(fill='toself')
-        st.plotly_chart(self.fig, use_container_width=True)
+        st.plotly_chart(self.fig, use_container_width=True,
+                        key=f'radar_{st.session_state.chart_key + 1}_{uuid.uuid4()}')
+        st.session_state.chart_key += 1
         return self.fig
 
     @staticmethod
@@ -95,7 +99,8 @@ class RadarChart:
     @staticmethod
     def _load_loan_data() -> pd.DataFrame:
         if 'loan_data' not in st.session_state:
-            st.session_state.loan_data = pd.read_csv(Path(__file__).parent / '..' / 'neural_core' / 'repo' / 'loan_data.csv')
+            st.session_state.loan_data = pd.read_csv(
+                Path(__file__).parent / '..' / 'neural_core' / 'repo' / 'loan_data.csv')
         return st.session_state.loan_data
 
 
@@ -114,14 +119,17 @@ class GaugeChart:
         self.fig = fig
 
     def render(self, force_size=False):
+        key = f'gauge_{st.session_state.chart_key + 1}_{uuid.uuid4()}'
         if force_size:
             st.plotly_chart(
                 self.fig,
                 use_container_width=False,
-                config={"displayModeBar": False}
+                config={"displayModeBar": False},
+                key=key
             )
         else:
-            st.plotly_chart(self.fig, use_container_width=True)
+            st.plotly_chart(self.fig, use_container_width=True, key=key)
+            st.session_state.chart_key += 1
         return self.fig
 
     @staticmethod
@@ -164,3 +172,25 @@ class GaugeChart:
             width=self.width
         )
         return fig
+
+
+class LineChart:
+
+    def __init__(self):
+        self.ax = None
+        self.fig = None
+
+    def build(self, x: list, y: list, title='', x_label='', y_label=''):
+        min_x, max_x = x[y.index(min(y))], x[y.index(max(y))]
+        self.fig, self.ax = plt.subplots()
+        self.ax.plot(x, y, color='b')
+        self.ax.axvline(x=min_x, color='r', linestyle='--', label='min')
+        self.ax.axvline(x=min_x, color='g', linestyle='--', label='max')
+        self.ax.set_xlabel(x_label)
+        self.ax.set_ylabel(y_label)
+        self.ax.set_title(title)
+        self.ax.legend()
+        plt.tight_layout()
+
+    def render(self):
+        st.pyplot(self.fig)

@@ -4,7 +4,7 @@ import pandas as pd
 
 from agent.agent import Agent
 import streamlit as st
-from models import Credit, Profile, RadarChart, GaugeChart
+from models import Credit, Profile, RadarChart, GaugeChart, LineChart
 
 
 def go_back():
@@ -150,21 +150,25 @@ def render_profile():
                 st.metric(label='Credit history', value=f'{profile.credit_history}y', delta=None)
 
 
-def render_credits():
+def render_all_credits():
     for credit in st.session_state.user_credits:
-        with st.container(border=True):
-            col_left, col_right = st.columns(2)
-            with col_left:
-                st.title(credit.name)
-                st.metric(label="Intent", value=credit.intent, delta=None)
-            with col_right:
-                with st.container(border=False, horizontal_alignment='center', horizontal=True):
-                    render_gauge(st.session_state.user_data,credit)
-            col1, col2 = st.columns(2)
-            with col1:
-                st.metric(label="Amount", value=f'${credit.amount}', delta=None, border=True)
-            with col2:
-                st.metric(label="Interest Rate", value=f'{credit.int_rate}%', delta=None, border=True)
+        render_credit(credit)
+
+
+def render_credit(credit: Credit):
+    with st.container(border=True):
+        col_left, col_right = st.columns(2)
+        with col_left:
+            st.title(credit.name)
+            st.metric(label="Intent", value=credit.intent, delta=None)
+        with col_right:
+            with st.container(border=False, horizontal_alignment='center', horizontal=True):
+                render_gauge(init_state(st.session_state.user_data, credit))
+        col1, col2 = st.columns(2)
+        with col1:
+            st.metric(label="Amount", value=f'${credit.amount}', delta=None, border=True)
+        with col2:
+            st.metric(label="Interest Rate", value=f'{credit.int_rate}%', delta=None, border=True)
 
 
 def render_credit_addition():
@@ -188,8 +192,8 @@ def render_credit_addition():
                 st.rerun()
 
 
-def render_gauge(profile: Profile, credit: Credit):
-    initial_state = Agent.AgentState(
+def init_state(profile: Profile, credit: Credit):
+    return Agent.AgentState(
         input_data=pd.DataFrame({
             'person_age': [profile.age],
             'person_gender': profile.gender,
@@ -208,9 +212,68 @@ def render_gauge(profile: Profile, credit: Credit):
         loan_confidence=0.0,
         state='initial'
     )
-    print(initial_state)
+
+
+def render_gauge(initial_state: Agent.AgentState):
     final_state = st.session_state.agent.invoke(initial_state)
-    print(final_state)
     gauge = GaugeChart(size=(225, 225))
     gauge.build(int(float(final_state['loan_confidence'])), label="chance")
     gauge.render(force_size=True)
+
+
+def use_agent(agent: Agent, initial_state: Agent.AgentState, x: list, name: str, replacements=None):
+    initial_states = []
+    for i in range(len(x)):
+        state = initial_state.copy()
+        state[name] = x[i]
+        initial_states.append(state)
+        if replacements is not None:
+            for other_name, func in replacements:
+                state[other_name] = func(x[i])
+    final_states = [float(agent.invoke(state)['loan_confidence']) for state in initial_states]
+    return final_states
+
+
+def render_advices():
+    profile: Profile = st.session_state.user_data
+    if st.session_state.user_credits is None or len(st.session_state.user_credits) == 0:
+        return
+    with st.container(border=True):
+        credit: Credit = st.selectbox(label='Choose credit', options=st.session_state.user_credits,
+                                      format_func=lambda x: x.name)
+    render_credit(credit)
+    ages = [i for i in range(int(profile.age), int(profile.age + 11))]
+    educations = [Profile.education_values()[i] for i in
+                  range(Profile.education_values().index(profile.education), len(Profile.education_values()))]
+    incomes = [i for i in
+               range(int(profile.income * 0.7), int(profile.income * 1.3), max(1, int(profile.income * 0.02)))]
+    experiences = [i for i in range(int(profile.experience), int(profile.experience + 11))]
+    ownership = Profile.home_ownership_values()
+    amounts = [i for i in range(int(credit.amount * 0.5), int(credit.amount * 1.5), 100)]
+    intents = Credit.intent_values()
+    int_rates = [0.1 * i for i in range(max(0, int(10 * credit.int_rate - 50)), int(10 * credit.int_rate + 50), 2)]
+    credit_histories = [i for i in range(int(profile.credit_history), int(profile.credit_history + 11))]
+    credit_scores = [i for i in
+                     range(int(max(250, profile.credit_score - 100)), int(min(profile.credit_score + 100, 900)), 10)]
+    initial_state = init_state(profile, credit)
+
+    def cell(x_values: list, name: str, title: str, x_label: str = 'years', replacements=None):
+        with st.container(border=True):
+            st.markdown(title)
+            chart = LineChart()
+            y_values = use_agent(st.session_state.agent, initial_state, x_values, name, replacements=replacements)
+            print(title)
+            print(f'{len(x_values)}:{x_values}')
+            print(f'{len(y_values)}:{y_values}')
+            chart.build(x_values, y_values, title, x_label, 'probability')
+            chart.render()
+
+    cell(ages, 'person_age', 'Age')
+    cell(incomes, 'person_income', 'Income', 'dolars',
+         replacements=[('loan_percent_income', lambda x: float(credit.amount) / float(x))])
+    cell(experiences, 'person_emp_exp', 'Experience')
+    cell(amounts, 'loan_amnt', 'Loan Amount', 'dolars',
+         replacements=[('loan_percent_income', lambda x: float(x) / float(profile.income))])
+    cell(int_rates, 'loan_int_rate', 'Interest rate', 'percentage')
+    cell(credit_histories, 'cb_person_cred_hist_length', "Credit History")
+    cell(credit_scores, 'credit_score', "Credit score", "points")
