@@ -7,7 +7,7 @@ if str(project_root) not in sys.path:
 
 import torch
 import torch.nn as nn
-from neural_core.models.neural_network import BaseLoanNN
+from agent.neural_network import BaseLoanNN
 import joblib
 
 
