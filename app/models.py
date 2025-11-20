@@ -100,7 +100,7 @@ class RadarChart:
     def _load_loan_data() -> pd.DataFrame:
         if 'loan_data' not in st.session_state:
             st.session_state.loan_data = pd.read_csv(
-                Path(__file__).parent.parent / 'neural-core' / 'data' / 'raw' / 'loan_data.csv'
+                Path(__file__).parent.parent / 'app' / 'data' / 'loan_data.csv'
             )
         return st.session_state.loan_data
 
