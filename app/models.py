@@ -6,6 +6,7 @@ import pandas as pd
 import streamlit as st
 import plotly.graph_objects as go
 from matplotlib import pyplot as plt
+import pandas as pd
 
 
 class Credit:

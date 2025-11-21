@@ -1,13 +1,9 @@
 import sys
 from pathlib import Path
 
-project_root = Path(__file__).resolve().parents[2]
-if str(project_root) not in sys.path:
-    sys.path.append(str(project_root))
-
 import torch
 import torch.nn as nn
-from agent.neural_network import BaseLoanNN
+from .neural_network import BaseLoanNN
 import joblib
 
 
