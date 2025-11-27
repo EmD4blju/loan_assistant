@@ -1,0 +1,48 @@
+# Here you can define all your datasets by using simple YAML syntax.
+#
+# Documentation for this file format can be found in "The Data Catalog"
+# Link: https://docs.kedro.org/en/stable/data/data_catalog.html
+
+raw_data:
+  type: pandas.CSVDataset
+  filepath: data/raw/loan_data.csv
+
+cleaned_data:
+  type: pandas.CSVDataset
+  filepath: data/cleaned/loan_data_cleaned.csv
+
+scaled_data:
+  type: pandas.CSVDataset
+  filepath: data/processed/loan_data_scaled.csv
+
+train_data:
+  type: pandas.CSVDataset
+  filepath: data/model_input/train_data.csv
+
+val_data:
+  type: pandas.CSVDataset
+  filepath: data/model_input/val_data.csv
+
+test_data:
+  type: pandas.CSVDataset
+  filepath: data/model_input/test_data.csv
+
+best_settings:
+  type: json.JSONDataset
+  filepath: docs/best_settings.json
+
+trained_model:
+  type: neural_core.utils.pytorch_model.PyTorchModel
+  filepath: models/trained_loan_model.pth
+
+evaluation_results:
+  type: json.JSONDataset
+  filepath: docs/evaluation_results.json
+
+shap_values:
+  type: pandas.CSVDataset
+  filepath: docs/shap_values.csv
+
+shap_plot:
+  type: matplotlib.MatplotlibWriter
+  filepath: docs/shap_plot.png

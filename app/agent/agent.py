@@ -32,6 +32,7 @@ class Agent():
         self._graph = graph.compile()
 
     def invoke(self, initial_state: AgentState) -> AgentState:
+        assert(isinstance(initial_state['input_data'], pd.DataFrame))
         output = self._graph.invoke(initial_state)
         return output
 

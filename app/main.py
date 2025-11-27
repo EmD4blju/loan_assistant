@@ -1,6 +1,7 @@
 import streamlit as st
-from components import render_main_page, render_profile_form, render_profile, render_all_credits, render_credit_addition, render_advices
+from components import render_main_page, render_form, render_loan_result, render_controls
 from agent.agent import Agent
+import pandas as pd
 
 
 def main():
@@ -9,8 +10,11 @@ def main():
     if 'step' not in st.session_state:
         st.session_state.step = 0
 
-    if 'user_data' not in st.session_state:
-        st.session_state.user_data = None
+    if 'collected_data' not in st.session_state:
+        st.session_state.collected_data = {}
+        
+    if 'loan_confidence' not in st.session_state:
+        st.session_state.loan_confidence = None
 
     if 'user_credits' not in st.session_state:
         st.session_state.user_credits = []
@@ -32,18 +36,24 @@ def main():
 
         # ~ Loan amount information
         case 1:
-            render_profile_form()
-
-            # ~ Personal information
+            render_form()
+        
         case 2:
-            credits_tab, profile_tab, advice_tab = st.tabs(['Credits', 'Profile', 'Advices'])
-            with credits_tab:
-                render_all_credits()
-                render_credit_addition()
-            with profile_tab:
-                render_profile()
-            with advice_tab:
-                render_advices()
+            initial_state = Agent.AgentState(
+                input_data=pd.DataFrame(st.session_state.collected_data, index=[0]),
+                loan_confidence=0.0,
+            )
+            
+            st.write("What goes into the model:")
+            st.write(initial_state['input_data'])
+            
+            st.session_state.loan_confidence = st.session_state.agent.invoke(initial_state)['loan_confidence']
+            
+            render_controls()
+
+        # ~ Result display
+        case 3:
+            render_loan_result()
 
 
 if __name__ == '__main__':

@@ -6,6 +6,7 @@ import pandas as pd
 import streamlit as st
 import plotly.graph_objects as go
 from matplotlib import pyplot as plt
+import pandas as pd
 
 
 class Credit:
@@ -100,7 +101,8 @@ class RadarChart:
     def _load_loan_data() -> pd.DataFrame:
         if 'loan_data' not in st.session_state:
             st.session_state.loan_data = pd.read_csv(
-                Path(__file__).parent / '..' / 'neural_core' / 'repo' / 'loan_data.csv')
+                Path(__file__).parent.parent / 'app' / 'data' / 'loan_data.csv'
+            )
         return st.session_state.loan_data
 
 
