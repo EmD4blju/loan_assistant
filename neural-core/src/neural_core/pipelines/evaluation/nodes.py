@@ -3,8 +3,12 @@ from neural_core.models.neural_network import BaseLoanNN
 import torch
 from torch.utils.data import Dataset, DataLoader
 from neural_core.models.dataset import DataFrameDataset
-from typing import Tuple
+from typing import Tuple, Dict
 from sklearn.metrics import accuracy_score, f1_score, roc_auc_score, precision_score, recall_score
+import shap
+import matplotlib.pyplot as plt
+import numpy as np
+
 
 
 def prepare_data(train_df: pd.DataFrame, test_df: pd.DataFrame) -> Tuple[Dataset, Dataset]:
@@ -47,3 +51,64 @@ def evaluate_model(model: BaseLoanNN, test_dataset: Dataset) -> pd.DataFrame:
         "precision": precision,
         "recall": recall
     }
+    
+def evaluate_shap_values(model: BaseLoanNN, test_dataset: DataFrameDataset) -> Tuple[pd.DataFrame, plt.Figure]:
+    """
+    Calculate SHAP values for the trained model and generate visualization.
+    
+    Args:
+        model: Trained neural network model
+        test_dataset: Test dataset (used as background data for SHAP)
+        
+    Returns:
+        Tuple of (shap_values_df, matplotlib figure)
+    """
+    model.eval()
+    
+    # Extract feature data and feature names from the dataset
+    feature_columns = test_dataset.feature_columns
+    
+    # Get the X data as numpy array (shape: [n_samples, n_features])
+    X_data = test_dataset.X.numpy()
+    
+    # Create a wrapper function for SHAP that returns numpy arrays
+    def model_predict(x):
+        model.eval()
+        with torch.no_grad():
+            tensor_input = torch.FloatTensor(x)
+            output = model(tensor_input)
+            # Return probability using sigmoid, reshape to 1D array
+            probs = torch.sigmoid(output).numpy() # sigmoid -> 0.96 | softmax -> [0.04, 0.96]
+            # Ensure output is always 1D (flatten if needed)
+            return probs.flatten() # -> [...]
+    
+    # Use a subset of data as background for SHAP (for performance)
+    background_size = min(100, len(X_data))
+    background_data = X_data[:background_size]
+    
+    # Initialize SHAP explainer
+    explainer = shap.KernelExplainer(model_predict, background_data)
+    
+    # Calculate SHAP values for a sample of data
+    sample_size = min(200, len(X_data))
+    sample_data = X_data[:sample_size]
+    shap_values = explainer.shap_values(sample_data)
+    
+    # Create DataFrame with SHAP values
+    shap_df = pd.DataFrame(
+        shap_values,
+        columns=feature_columns
+    )
+    
+    # Generate SHAP summary plot
+    fig = plt.figure(figsize=(12, 8))
+    shap.summary_plot(
+        shap_values, 
+        sample_data, 
+        feature_names=feature_columns,
+        show=False
+    )
+    plt.tight_layout()
+    
+    return shap_df, fig
+    

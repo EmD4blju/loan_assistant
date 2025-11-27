@@ -38,3 +38,11 @@ trained_model:
 evaluation_results:
   type: json.JSONDataset
   filepath: docs/evaluation_results.json
+
+shap_values:
+  type: pandas.CSVDataset
+  filepath: docs/shap_values.csv
+
+shap_plot:
+  type: matplotlib.MatplotlibWriter
+  filepath: docs/shap_plot.png
