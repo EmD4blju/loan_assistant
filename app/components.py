@@ -233,6 +233,17 @@ def render_quiz_step_13():
 def render_loan_result():
     confidence = float(st.session_state.loan_confidence)
     
+    # Apply custom CSS to make this page full-width
+    st.markdown("""
+        <style>
+        .block-container {
+            max-width: 100% !important;
+            padding-left: 2rem !important;
+            padding-right: 2rem !important;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+    
     # Title spanning full width
     st.markdown("<h1 style='text-align: center;'>Loan Eligibility Result</h1>", unsafe_allow_html=True)
     
@@ -246,7 +257,9 @@ def render_loan_result():
         st.markdown(f"<h1 style='text-align: center; color: #1f77b4;'>{confidence:.2f}%</h1>", unsafe_allow_html=True)
         
         # Gauge chart centered in left column
-        render_gauge(int(confidence))
+        col_spacer1, col_gauge, col_spacer2 = st.columns([1, 2, 1])
+        with col_gauge:
+            render_gauge(int(confidence))
         
         # Start Over button in left column
         st.markdown("<br>", unsafe_allow_html=True)

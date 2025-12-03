@@ -10,7 +10,7 @@ import pandas as pd
 
 
 def main():
-    st.set_page_config(page_title='Loan Assistant', layout='wide', page_icon='🤖')
+    st.set_page_config(page_title='Loan Assistant', layout='centered', page_icon='🤖')
 
     if 'step' not in st.session_state:
         st.session_state.step = 0
