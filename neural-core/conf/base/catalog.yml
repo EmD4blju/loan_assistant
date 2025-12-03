@@ -15,6 +15,10 @@ scaled_data:
   type: pandas.CSVDataset
   filepath: data/processed/loan_data_scaled.csv
 
+scaler:
+  type: pickle.PickleDataset
+  filepath: models/feature_scaler.pkl
+
 train_data:
   type: pandas.CSVDataset
   filepath: data/model_input/train_data.csv
