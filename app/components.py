@@ -7,6 +7,30 @@ import streamlit as st
 from models import Credit, Profile, RadarChart, GaugeChart, LineChart
 
 
+def initialize_dataframe():
+    """
+    Initialize a pandas DataFrame with default values for all required fields.
+    
+    Returns:
+        pd.DataFrame: A single-row DataFrame with default values for the loan application quiz.
+    """
+    return pd.DataFrame({
+        'person_age': [25],
+        'person_gender': ['male'],
+        'person_education': ['High School'],
+        'person_income': [50000.0],
+        'person_emp_exp': [0],
+        'person_home_ownership': ['RENT'],
+        'loan_amnt': [10000.0],
+        'loan_intent': ['HOMEIMPROVEMENT'],
+        'loan_int_rate': [10.0],
+        'loan_percent_income': [0.2],
+        'cb_person_cred_hist_length': [5.0],
+        'credit_score': [500],
+        'previous_loan_defaults_on_file': ['No']
+    })
+
+
 def go_back():
     st.session_state.step -= 1
 
@@ -270,21 +294,7 @@ def render_loan_result():
         if st.button('Start Over', icon='🔄', type='primary'):
             # Reset to initial state
             st.session_state.step = 0
-            st.session_state.collected_data = pd.DataFrame({
-                'person_age': [25],
-                'person_gender': ['male'],
-                'person_education': ['High School'],
-                'person_income': [50000.0],
-                'person_emp_exp': [0],
-                'person_home_ownership': ['RENT'],
-                'loan_amnt': [10000.0],
-                'loan_intent': ['HOMEIMPROVEMENT'],
-                'loan_int_rate': [10.0],
-                'loan_percent_income': [0.2],
-                'cb_person_cred_hist_length': [5.0],
-                'credit_score': [500],
-                'previous_loan_defaults_on_file': ['No']
-            })
+            st.session_state.collected_data = initialize_dataframe()
             st.session_state.loan_confidence = None
             st.rerun()
     

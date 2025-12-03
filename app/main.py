@@ -4,7 +4,7 @@ from components import (render_main_page, render_loan_result,
                        render_quiz_step_4, render_quiz_step_5, render_quiz_step_6,
                        render_quiz_step_7, render_quiz_step_8, render_quiz_step_9,
                        render_quiz_step_10, render_quiz_step_11, render_quiz_step_12,
-                       render_quiz_step_13)
+                       render_quiz_step_13, initialize_dataframe)
 from agent.agent import Agent
 import pandas as pd
 
@@ -16,22 +16,8 @@ def main():
         st.session_state.step = 0
 
     if 'collected_data' not in st.session_state:
-        # Initialize as DataFrame with one row
-        st.session_state.collected_data = pd.DataFrame({
-            'person_age': [25],
-            'person_gender': ['male'],
-            'person_education': ['High School'],
-            'person_income': [50000.0],
-            'person_emp_exp': [0],
-            'person_home_ownership': ['RENT'],
-            'loan_amnt': [10000.0],
-            'loan_intent': ['HOMEIMPROVEMENT'],
-            'loan_int_rate': [10.0],
-            'loan_percent_income': [0.2],
-            'cb_person_cred_hist_length': [5.0],
-            'credit_score': [500],
-            'previous_loan_defaults_on_file': ['No']
-        })
+        # Initialize as DataFrame with one row containing default values
+        st.session_state.collected_data = initialize_dataframe()
         
     if 'loan_confidence' not in st.session_state:
         st.session_state.loan_confidence = None
@@ -97,7 +83,10 @@ def main():
         # ~ Invoke model and display result
         case 14:
             # Invoke the agent workflow to get prediction
-            # Pass DataFrame directly - agent will prepare data on its own
+            # Pass DataFrame directly - agent handles:
+            #   1. Encoding categorical features (gender, education, home_ownership, loan_intent, defaults)
+            #   2. Scaling numeric features using pre-fitted scaler
+            #   3. Converting to tensor format for neural network input
             initial_state = Agent.AgentState(
                 input_data=st.session_state.collected_data,
                 loan_confidence=0.0,
