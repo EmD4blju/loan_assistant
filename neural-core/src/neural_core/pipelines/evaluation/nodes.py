@@ -1,5 +1,5 @@
 import pandas as pd
-from neural_core.models.neural_network import BaseLoanNN
+from neural_core.models.neural_network import BaseLoanNN, TemperatureScaledNN
 import torch
 from torch.utils.data import Dataset, DataLoader
 from neural_core.models.dataset import DataFrameDataset
@@ -16,7 +16,7 @@ def prepare_data(train_df: pd.DataFrame, test_df: pd.DataFrame) -> Tuple[Dataset
     test_dataset = DataFrameDataset(test_df, target_column='loan_status')
     return train_dataset, test_dataset
 
-def evaluate_model(model: BaseLoanNN, test_dataset: Dataset) -> pd.DataFrame:
+def evaluate_model(model: BaseLoanNN, test_dataset: Dataset) -> Dict:
     test_data_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
     model.eval()
     
@@ -26,11 +26,27 @@ def evaluate_model(model: BaseLoanNN, test_dataset: Dataset) -> pd.DataFrame:
     precision = 0.0
     recall = 0.0
     
+    all_predictions = []
     
     with torch.no_grad():
         for X, y in test_data_loader:
             outputs = model(X)
-            predicted = (torch.sigmoid(outputs) > 0.5).float()
+            probabilities = torch.sigmoid(outputs)
+            predicted = (probabilities > 0.5).float()
+            
+            # Store prediction history
+            for i in range(len(X)):
+                prob = probabilities[i].item()
+                pred_class = int(predicted[i].item())
+                confidence = prob if pred_class == 1 else (1 - prob)
+                
+                all_predictions.append({
+                    "sample_number": len(all_predictions),
+                    "probability": prob,
+                    "predicted_class": pred_class,
+                    "confidence": confidence,
+                    "true_label": int(y[i].item())
+                })
             
             accuracy += accuracy_score(y.numpy(), predicted.numpy())
             f1 += f1_score(y.numpy(), predicted.numpy())
@@ -44,13 +60,77 @@ def evaluate_model(model: BaseLoanNN, test_dataset: Dataset) -> pd.DataFrame:
     precision /= len(test_data_loader)
     recall /= len(test_data_loader)
     
-    return {
-        "accuracy": accuracy,
-        "f1_score": f1,
-        "roc_auc": roc_auc,
-        "precision": precision,
-        "recall": recall
+    results = {
+        "metrics": {
+            "accuracy": accuracy,
+            "f1_score": f1,
+            "roc_auc": roc_auc,
+            "precision": precision,
+            "recall": recall
+        },
+        "total_samples": len(all_predictions),
+        "predictions": all_predictions
     }
+    
+    return results
+    
+def evaluate_temperature_scaled_model(model: TemperatureScaledNN, test_dataset: Dataset) -> Dict:
+    test_data_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
+    model.eval()
+    
+    accuracy = 0.0
+    f1 = 0.0
+    roc_auc = 0.0
+    precision = 0.0
+    recall = 0.0
+    
+    all_predictions = []
+    
+    with torch.no_grad():
+        for X, y in test_data_loader:
+            outputs = model(X)
+            probabilities = torch.sigmoid(outputs)
+            predicted = (probabilities > 0.5).float()
+            
+            # Store prediction history
+            for i in range(len(X)):
+                prob = probabilities[i].item()
+                pred_class = int(predicted[i].item())
+                confidence = prob if pred_class == 1 else (1 - prob)
+                
+                all_predictions.append({
+                    "sample_number": len(all_predictions),
+                    "probability": prob,
+                    "predicted_class": pred_class,
+                    "confidence": confidence,
+                    "true_label": int(y[i].item())
+                })
+            
+            accuracy += accuracy_score(y.numpy(), predicted.numpy())
+            f1 += f1_score(y.numpy(), predicted.numpy())
+            roc_auc += roc_auc_score(y.numpy(), predicted.numpy())
+            precision += precision_score(y.numpy(), predicted.numpy())
+            recall += recall_score(y.numpy(), predicted.numpy())
+        
+    accuracy /= len(test_data_loader)
+    f1 /= len(test_data_loader)
+    roc_auc /= len(test_data_loader)
+    precision /= len(test_data_loader)
+    recall /= len(test_data_loader)
+    
+    results = {
+        "metrics": {
+            "accuracy": accuracy,
+            "f1_score": f1,
+            "roc_auc": roc_auc,
+            "precision": precision,
+            "recall": recall,
+        },
+        "total_samples": len(all_predictions),
+        "predictions": all_predictions
+    }
+    
+    return results
     
 def evaluate_shap_values(model: BaseLoanNN, test_dataset: DataFrameDataset) -> Tuple[pd.DataFrame, plt.Figure]:
     """

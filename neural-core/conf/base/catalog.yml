@@ -35,6 +35,14 @@ trained_model:
   type: neural_core.utils.pytorch_model.PyTorchModel
   filepath: models/trained_loan_model.pth
 
+temp_scaled_model:
+  type: neural_core.utils.pytorch_model.PyTorchModel
+  filepath: models/temp_scaled_loan_model.pth
+
+temp_scaled_evaluation_results:
+  type: json.JSONDataset
+  filepath: docs/temp_scaled_evaluation_results.json
+
 evaluation_results:
   type: json.JSONDataset
   filepath: docs/evaluation_results.json
