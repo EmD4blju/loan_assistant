@@ -233,55 +233,57 @@ def render_quiz_step_13():
 def render_loan_result():
     confidence = float(st.session_state.loan_confidence)
     
-    # Main result section - centered
+    # Title spanning full width
     st.markdown("<h1 style='text-align: center;'>Loan Eligibility Result</h1>", unsafe_allow_html=True)
-    st.markdown(f"<h3 style='text-align: center;'>Your loan approval confidence is: <b>{confidence:.2f}%</b></h3>", 
-                unsafe_allow_html=True)
     
-    # Center the gauge chart
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        render_gauge(int(confidence))
+    # Two-column layout: Model output on LEFT, User answers on RIGHT
+    col_left, col_right = st.columns([1, 1])
     
-    st.markdown("---")
-    
-    # User answers summary section
-    st.markdown("<h2 style='text-align: center;'>Your Quiz Answers</h2>", unsafe_allow_html=True)
-    
-    # Display collected data in a nice format
-    col_left, col_right = st.columns(2)
-    
+    # LEFT COLUMN: Model Output
     with col_left:
-        st.markdown("#### Personal Information")
-        st.metric(label="Age", value=int(st.session_state.collected_data.at[0, 'person_age']))
-        st.metric(label="Gender", value=st.session_state.collected_data.at[0, 'person_gender'])
-        st.metric(label="Education", value=st.session_state.collected_data.at[0, 'person_education'])
-        st.metric(label="Annual Income", value=f"${st.session_state.collected_data.at[0, 'person_income']:,.2f}")
-        st.metric(label="Employment Experience", value=f"{int(st.session_state.collected_data.at[0, 'person_emp_exp'])} years")
-        st.metric(label="Home Ownership", value=st.session_state.collected_data.at[0, 'person_home_ownership'])
-    
-    with col_right:
-        st.markdown("#### Loan Information")
-        st.metric(label="Loan Amount", value=f"${st.session_state.collected_data.at[0, 'loan_amnt']:,.2f}")
-        st.metric(label="Loan Intent", value=st.session_state.collected_data.at[0, 'loan_intent'])
-        st.metric(label="Interest Rate", value=f"{st.session_state.collected_data.at[0, 'loan_int_rate']}%")
-        # Convert loan percent of income (0-1) to percentage (0-100)
-        loan_percent_of_income = st.session_state.collected_data.at[0, 'loan_percent_income'] * 100
-        st.metric(label="Loan % of Income", value=f"{loan_percent_of_income:.1f}%")
-        st.metric(label="Credit History Length", value=f"{st.session_state.collected_data.at[0, 'cb_person_cred_hist_length']} years")
-        st.metric(label="Credit Score", value=int(st.session_state.collected_data.at[0, 'credit_score']))
-        st.metric(label="Previous Loan Defaults", value=st.session_state.collected_data.at[0, 'previous_loan_defaults_on_file'])
-    
-    st.markdown("---")
-    
-    # Navigation button to start over
-    with st.container(horizontal=True, horizontal_alignment='center'):
-        if st.button('Start Over', icon='🔄', type='primary'):
+        st.markdown("<h2 style='text-align: center;'>Model Prediction</h2>", unsafe_allow_html=True)
+        st.markdown(f"<h3 style='text-align: center;'>Loan Approval Confidence</h3>", unsafe_allow_html=True)
+        st.markdown(f"<h1 style='text-align: center; color: #1f77b4;'>{confidence:.2f}%</h1>", unsafe_allow_html=True)
+        
+        # Gauge chart centered in left column
+        render_gauge(int(confidence))
+        
+        # Start Over button in left column
+        st.markdown("<br>", unsafe_allow_html=True)
+        if st.button('Start Over', icon='🔄', type='primary', use_container_width=True):
             # Reset to initial state
             st.session_state.step = 0
             st.session_state.collected_data = initialize_dataframe()
             st.session_state.loan_confidence = None
             st.rerun()
+    
+    # RIGHT COLUMN: User Answers
+    with col_right:
+        st.markdown("<h2 style='text-align: center;'>Your Quiz Answers</h2>", unsafe_allow_html=True)
+        
+        # Create two sub-columns for answers
+        subcol_left, subcol_right = st.columns(2)
+        
+        with subcol_left:
+            st.markdown("#### Personal Information")
+            st.metric(label="Age", value=int(st.session_state.collected_data.at[0, 'person_age']))
+            st.metric(label="Gender", value=st.session_state.collected_data.at[0, 'person_gender'])
+            st.metric(label="Education", value=st.session_state.collected_data.at[0, 'person_education'])
+            st.metric(label="Annual Income", value=f"${st.session_state.collected_data.at[0, 'person_income']:,.2f}")
+            st.metric(label="Employment Experience", value=f"{int(st.session_state.collected_data.at[0, 'person_emp_exp'])} years")
+            st.metric(label="Home Ownership", value=st.session_state.collected_data.at[0, 'person_home_ownership'])
+        
+        with subcol_right:
+            st.markdown("#### Loan Information")
+            st.metric(label="Loan Amount", value=f"${st.session_state.collected_data.at[0, 'loan_amnt']:,.2f}")
+            st.metric(label="Loan Intent", value=st.session_state.collected_data.at[0, 'loan_intent'])
+            st.metric(label="Interest Rate", value=f"{st.session_state.collected_data.at[0, 'loan_int_rate']}%")
+            # Convert loan percent of income (0-1) to percentage (0-100)
+            loan_percent_of_income = st.session_state.collected_data.at[0, 'loan_percent_income'] * 100
+            st.metric(label="Loan % of Income", value=f"{loan_percent_of_income:.1f}%")
+            st.metric(label="Credit History Length", value=f"{st.session_state.collected_data.at[0, 'cb_person_cred_hist_length']} years")
+            st.metric(label="Credit Score", value=int(st.session_state.collected_data.at[0, 'credit_score']))
+            st.metric(label="Previous Loan Defaults", value=st.session_state.collected_data.at[0, 'previous_loan_defaults_on_file'])
     
     
             
