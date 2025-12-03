@@ -39,18 +39,6 @@ def go_next():
     st.session_state.step += 1
 
 
-def render_controls():
-    with st.container(horizontal=True):
-        back_button = st.button(
-            label='Back',
-            on_click=go_back
-        )
-        next_button = st.button(
-            label='Next',
-            on_click=go_next
-        )
-
-
 def render_form_controls():
     """Render Back/Next navigation buttons for quiz steps in a two-column layout."""
     col1, col2 = st.columns(2)
