@@ -4,11 +4,41 @@ import torch
 from torch.utils.data import Dataset, DataLoader
 from neural_core.models.dataset import DataFrameDataset
 from typing import Tuple, Dict
-from sklearn.metrics import accuracy_score, f1_score, roc_auc_score, precision_score, recall_score
+from sklearn.metrics import accuracy_score, f1_score, roc_auc_score, precision_score, recall_score, brier_score_loss
 import shap
 import matplotlib.pyplot as plt
 import numpy as np
 
+
+def calculate_ece(probs, labels, n_bins=10):
+    """
+    Calculate Expected Calibration Error (ECE).
+    
+    Args:
+        probs: Array of predicted probabilities
+        labels: Array of true labels
+        n_bins: Number of bins to use for calibration
+        
+    Returns:
+        ECE value (lower is better)
+    """
+    probs = np.array(probs)
+    labels = np.array(labels)
+    bin_boundaries = np.linspace(0, 1, n_bins + 1)
+    ece = 0.0
+    
+    for i in range(n_bins):
+        bin_lower = bin_boundaries[i]
+        bin_upper = bin_boundaries[i + 1]
+        in_bin = (probs >= bin_lower) & (probs < bin_upper)
+        
+        if np.sum(in_bin) > 0:
+            bin_accuracy = np.mean(labels[in_bin])
+            bin_confidence = np.mean(probs[in_bin])
+            bin_weight = np.sum(in_bin) / len(probs)
+            ece += bin_weight * np.abs(bin_accuracy - bin_confidence)
+    
+    return ece
 
 
 def prepare_data(train_df: pd.DataFrame, test_df: pd.DataFrame) -> Tuple[Dataset, Dataset]:
@@ -27,6 +57,8 @@ def evaluate_model(model: BaseLoanNN, test_dataset: Dataset) -> Dict:
     recall = 0.0
     
     all_predictions = []
+    all_probs = []
+    all_labels = []
     
     with torch.no_grad():
         for X, y in test_data_loader:
@@ -34,7 +66,9 @@ def evaluate_model(model: BaseLoanNN, test_dataset: Dataset) -> Dict:
             probabilities = torch.sigmoid(outputs)
             predicted = (probabilities > 0.5).float()
             
-            # Store prediction history
+            all_probs.extend(probabilities.squeeze().numpy().tolist())
+            all_labels.extend(y.numpy().tolist())
+            
             for i in range(len(X)):
                 prob = probabilities[i].item()
                 pred_class = int(predicted[i].item())
@@ -60,13 +94,19 @@ def evaluate_model(model: BaseLoanNN, test_dataset: Dataset) -> Dict:
     precision /= len(test_data_loader)
     recall /= len(test_data_loader)
     
+    brier_score = brier_score_loss(all_labels, all_probs)
+    
+    ece = calculate_ece(all_probs, all_labels)
+    
     results = {
         "metrics": {
             "accuracy": accuracy,
             "f1_score": f1,
             "roc_auc": roc_auc,
             "precision": precision,
-            "recall": recall
+            "recall": recall,
+            "brier_score": brier_score,
+            "ece": ece
         },
         "total_samples": len(all_predictions),
         "predictions": all_predictions
@@ -85,12 +125,18 @@ def evaluate_temperature_scaled_model(model: TemperatureScaledNN, test_dataset: 
     recall = 0.0
     
     all_predictions = []
+    all_probs = []
+    all_labels = []
     
     with torch.no_grad():
         for X, y in test_data_loader:
             outputs = model(X)
             probabilities = torch.sigmoid(outputs)
             predicted = (probabilities > 0.5).float()
+            
+            # Store for calibration metrics
+            all_probs.extend(probabilities.squeeze().numpy().tolist())
+            all_labels.extend(y.numpy().tolist())
             
             # Store prediction history
             for i in range(len(X)):
@@ -118,6 +164,12 @@ def evaluate_temperature_scaled_model(model: TemperatureScaledNN, test_dataset: 
     precision /= len(test_data_loader)
     recall /= len(test_data_loader)
     
+    # Calculate Brier Score
+    brier_score = brier_score_loss(all_labels, all_probs)
+    
+    # Calculate Expected Calibration Error
+    ece = calculate_ece(all_probs, all_labels)
+    
     results = {
         "metrics": {
             "accuracy": accuracy,
@@ -125,6 +177,8 @@ def evaluate_temperature_scaled_model(model: TemperatureScaledNN, test_dataset: 
             "roc_auc": roc_auc,
             "precision": precision,
             "recall": recall,
+            "brier_score": brier_score,
+            "ece": ece
         },
         "total_samples": len(all_predictions),
         "predictions": all_predictions
