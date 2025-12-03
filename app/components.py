@@ -52,19 +52,14 @@ def render_controls():
 
 
 def render_form_controls():
-    def form_next():
-        st.session_state.step += 1
-
-    def form_back():
-        st.session_state.step -= 1
-
+    """Render Back/Next navigation buttons for quiz steps in a two-column layout."""
     col1, col2 = st.columns(2)
     with col1:
         with st.container(horizontal=True, horizontal_alignment="left"):
-            st.button(label='Back', on_click=form_back)
+            st.button(label='Back', on_click=go_back)
     with col2:
         with st.container(horizontal=True, horizontal_alignment="right"):
-            st.button(label='Next', on_click=form_next, type='primary')
+            st.button(label='Next', on_click=go_next, type='primary')
 
 
 def render_main_page():
@@ -282,7 +277,9 @@ def render_loan_result():
         st.metric(label="Loan Amount", value=f"${st.session_state.collected_data.at[0, 'loan_amnt']:,.2f}")
         st.metric(label="Loan Intent", value=st.session_state.collected_data.at[0, 'loan_intent'])
         st.metric(label="Interest Rate", value=f"{st.session_state.collected_data.at[0, 'loan_int_rate']}%")
-        st.metric(label="Loan % of Income", value=f"{st.session_state.collected_data.at[0, 'loan_percent_income']*100:.1f}%")
+        # Convert loan percent of income (0-1) to percentage (0-100)
+        loan_percent_of_income = st.session_state.collected_data.at[0, 'loan_percent_income'] * 100
+        st.metric(label="Loan % of Income", value=f"{loan_percent_of_income:.1f}%")
         st.metric(label="Credit History Length", value=f"{st.session_state.collected_data.at[0, 'cb_person_cred_hist_length']} years")
         st.metric(label="Credit Score", value=int(st.session_state.collected_data.at[0, 'credit_score']))
         st.metric(label="Previous Loan Defaults", value=st.session_state.collected_data.at[0, 'previous_loan_defaults_on_file'])
