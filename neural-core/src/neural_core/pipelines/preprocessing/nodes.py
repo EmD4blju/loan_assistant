@@ -18,12 +18,15 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     Q3 = df['person_age'].quantile(0.975) # Using 97.5 percentile to retain more data (up to 70 years old)
     IQR = Q3 - Q1
     df = df[(df['person_age'] >= Q1 - 1.5 * IQR) & (df['person_age'] <= Q3 + 1.5 * IQR)].copy()
+    
+    #~ Remove colinearity
+    df = df.drop(columns=['person_gender', 'person_age', 'cb_person_cred_hist_length'])
     return df
 
 
 def encode_categorical(df: pd.DataFrame) -> Tuple[pd.DataFrame, Dict[str, LabelEncoder]]:
     encoders = {}
-    categorical_features = ['person_gender', 'person_education', 'person_home_ownership', 'loan_intent', 'previous_loan_defaults_on_file']
+    categorical_features = ['person_education', 'person_home_ownership', 'loan_intent', 'previous_loan_defaults_on_file']
     for feature in categorical_features:
         encoder = LabelEncoder()
         df[feature] = encoder.fit_transform(df[feature])
@@ -32,7 +35,7 @@ def encode_categorical(df: pd.DataFrame) -> Tuple[pd.DataFrame, Dict[str, LabelE
     
 
 def scale_numerical(df: pd.DataFrame, scaler: TransformerMixin) -> Tuple[pd.DataFrame, TransformerMixin]:
-    numeric_features = ['person_age', 'person_income', 'loan_amnt', 'loan_int_rate', 'loan_percent_income', 'cb_person_cred_hist_length', 'person_emp_exp', 'credit_score']
+    numeric_features = ['person_income', 'loan_amnt', 'loan_int_rate', 'loan_percent_income', 'person_emp_exp', 'credit_score']
     scaler = StandardScaler()
     df[numeric_features] = scaler.fit_transform(df[numeric_features])
     return df, scaler
