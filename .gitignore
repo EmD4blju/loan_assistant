@@ -171,6 +171,7 @@ venv/
 ENV/
 env/
 .venv
+.test-venv
 
 # IDEs
 .vscode/
