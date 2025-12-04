@@ -1,0 +1,56 @@
+[build-system]
+requires = [
+    "setuptools",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+requires-python = ">=3.10"
+name = "loan_assistant"
+readme = "README.md"
+dynamic = [
+    "version",
+]
+dependencies = [
+    "ipython>=8.10",
+    "jupyterlab>=3.0",
+    "notebook",
+    "kedro~=1.1.1",
+    "pandas>=2.3.3",
+    "numpy>=2.2.6",
+    "torch>=2.9.1",
+    "seaborn>=0.13.2",
+    "matplotlib>=3.10.7",
+    "streamlit>=1.52.0",
+    "scikit-learn>=1.7.2",
+    "optuna>=4.6.0",
+    "shap>=0.49.1",
+    "kedro-datasets>=9.0.0",
+    "langgraph>=1.0.4",
+    "plotly>=6.5.0",
+]
+
+[project.scripts]
+loan-assistant = "loan_assistant.__main__:main"
+
+[project.entry-points."kedro.hooks"]
+
+[tool.setuptools.dynamic.version]
+attr = "loan_assistant.__version__"
+
+[tool.setuptools.packages.find]
+where = [
+    "src",
+]
+namespaces = false
+
+[tool.kedro]
+package_name = "loan_assistant"
+project_name = "loan_assistant"
+kedro_init_version = "1.1.1"
+tools = "['None']"
+example_pipeline = "False"
+source_dir = "src"
+
+[tool.kedro_telemetry]
+project_id = "9a72550a304448e38b0b782feecdcb9f"
