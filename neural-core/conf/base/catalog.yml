@@ -15,6 +15,10 @@ scaled_data:
   type: pandas.CSVDataset
   filepath: data/processed/loan_data_scaled.csv
 
+scaler:
+  type: pickle.PickleDataset
+  filepath: models/feature_scaler.pkl
+
 train_data:
   type: pandas.CSVDataset
   filepath: data/model_input/train_data.csv
@@ -34,6 +38,14 @@ best_settings:
 trained_model:
   type: neural_core.utils.pytorch_model.PyTorchModel
   filepath: models/trained_loan_model.pth
+
+temp_scaled_model:
+  type: neural_core.utils.pytorch_model.PyTorchModel
+  filepath: models/temp_scaled_loan_model.pth
+
+temp_scaled_evaluation_results:
+  type: json.JSONDataset
+  filepath: docs/temp_scaled_evaluation_results.json
 
 evaluation_results:
   type: json.JSONDataset

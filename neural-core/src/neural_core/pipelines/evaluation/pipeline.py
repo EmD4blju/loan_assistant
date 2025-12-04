@@ -1,5 +1,5 @@
 from kedro.pipeline import Pipeline, node
-from .nodes import evaluate_model, prepare_data, evaluate_shap_values
+from .nodes import evaluate_model, prepare_data, evaluate_shap_values, evaluate_temperature_scaled_model
 
 def create_evaluation_pipeline() -> Pipeline:
     return Pipeline(
@@ -15,6 +15,12 @@ def create_evaluation_pipeline() -> Pipeline:
                 inputs=["trained_model", "test_dataset"],
                 outputs="evaluation_results",
                 name="evaluate_model_node",
+            ),
+            node(
+                func=evaluate_temperature_scaled_model,
+                inputs=["temp_scaled_model", "test_dataset"],
+                outputs="temp_scaled_evaluation_results",
+                name="evaluate_temperature_scaled_model_node",
             ),
             node(
                 func=evaluate_shap_values,
