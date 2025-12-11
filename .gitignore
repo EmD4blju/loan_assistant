@@ -64,11 +64,6 @@ __pycache__/
 *$py.class
 
 # Distribution / packaging
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
 .Python
 build/
 develop-eggs/
@@ -165,24 +160,3 @@ venv.bak/
 
 # mlflow local runs
 mlruns/*
-
-# Virtual environments
-venv/
-ENV/
-env/
-.venv
-.test-venv
-
-# IDEs
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Project specific
-*.log

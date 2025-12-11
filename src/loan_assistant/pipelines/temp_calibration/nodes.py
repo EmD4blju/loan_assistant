@@ -1,6 +1,6 @@
 import pandas as pd
-from neural_core.models.dataset import DataFrameDataset
-from neural_core.models.neural_network import BaseLoanNN, TemperatureScaledNN
+from loan_assistant.models.dataset import DataFrameDataset
+from loan_assistant.models.neural_network import BaseLoanNN, TemperatureScaledNN
 from torch.utils.data import Dataset, DataLoader
 from typing import Tuple
 

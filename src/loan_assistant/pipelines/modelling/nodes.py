@@ -1,10 +1,10 @@
 import pandas as pd
-from neural_core.models.neural_network import BaseLoanNN
+from loan_assistant.models.neural_network import BaseLoanNN
 import torch
 from torch import nn
 from torch.optim import Adam
 from torch.utils.data import Dataset, DataLoader
-from neural_core.models.dataset import DataFrameDataset
+from loan_assistant.models.dataset import DataFrameDataset
 from typing import Tuple, List
 
 def prepare_data(train_df: pd.DataFrame, val_df: pd.DataFrame) -> Tuple[Dataset, Dataset]:

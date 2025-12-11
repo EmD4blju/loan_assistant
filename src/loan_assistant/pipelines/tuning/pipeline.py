@@ -1,5 +1,5 @@
 from kedro.pipeline import Pipeline, node
-from neural_core.pipelines.tuning.nodes import prepare_data, tune_hyperparameters
+from loan_assistant.pipelines.tuning.nodes import prepare_data, tune_hyperparameters
 
 def create_tuning_pipeline() -> Pipeline:
     return Pipeline(

@@ -1,10 +1,10 @@
-# neural_core
+# loan_assistant
 
 [![Powered by Kedro](https://img.shields.io/badge/powered_by-kedro-ffc900?logo=kedro)](https://kedro.org)
 
 ## Overview
 
-This is your new Kedro project, which was generated using `kedro 1.0.0`.
+This is your new Kedro project, which was generated using `kedro 1.1.1`.
 
 Take a look at the [Kedro documentation](https://docs.kedro.org) to get started.
 

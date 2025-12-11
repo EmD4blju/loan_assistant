@@ -2,11 +2,11 @@
 from __future__ import annotations
 
 from kedro.pipeline import Pipeline
-from neural_core.pipelines.preprocessing.pipeline import create_preprocessing_pipeline
-from neural_core.pipelines.tuning.pipeline import create_tuning_pipeline
-from neural_core.pipelines.modelling.pipeline import create_modelling_pipeline
-from neural_core.pipelines.evaluation.pipeline import create_evaluation_pipeline
-from neural_core.pipelines.temp_calibration.pipeline import create_temp_calibration_pipeline
+from loan_assistant.pipelines.preprocessing.pipeline import create_preprocessing_pipeline
+from loan_assistant.pipelines.tuning.pipeline import create_tuning_pipeline
+from loan_assistant.pipelines.modelling.pipeline import create_modelling_pipeline
+from loan_assistant.pipelines.evaluation.pipeline import create_evaluation_pipeline
+from loan_assistant.pipelines.temp_calibration.pipeline import create_temp_calibration_pipeline
 
 
 def register_pipelines() -> dict[str, Pipeline]:

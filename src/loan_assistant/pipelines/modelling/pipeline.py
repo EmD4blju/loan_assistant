@@ -1,5 +1,5 @@
 from kedro.pipeline import Pipeline, node
-from neural_core.pipelines.modelling.nodes import prepare_data, train_model
+from .nodes import prepare_data, train_model
 
 def create_modelling_pipeline() -> Pipeline:
     return Pipeline([

@@ -1,5 +1,5 @@
-"""neural_core file for ensuring the package is executable
-as `neural-core` and `python -m neural_core`
+"""loan_assistant file for ensuring the package is executable
+as `loan-assistant` and `python -m loan_assistant`
 """
 import sys
 from pathlib import Path

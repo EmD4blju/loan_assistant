@@ -1,4 +1,4 @@
-"""neural_core
+"""loan_assistant
 """
 
 __version__ = "0.1"

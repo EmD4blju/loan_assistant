@@ -1,8 +1,8 @@
 import pandas as pd
-from neural_core.models.neural_network import BaseLoanNN, TemperatureScaledNN
+from loan_assistant.models.neural_network import BaseLoanNN, TemperatureScaledNN
 import torch
 from torch.utils.data import Dataset, DataLoader
-from neural_core.models.dataset import DataFrameDataset
+from loan_assistant.models.dataset import DataFrameDataset
 from typing import Tuple, Dict
 from sklearn.metrics import accuracy_score, f1_score, roc_auc_score, precision_score, recall_score, brier_score_loss
 import shap
