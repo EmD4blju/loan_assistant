@@ -40,8 +40,8 @@ class Agent():
         processed_df = state["input_data"].copy()
         for column, encoder in self.categorical_encoders.items():
             processed_df[column] = encoder.transform(processed_df[column])
-        numeric_features = ['person_age', 'person_income', 'loan_amnt', 'loan_int_rate', 'loan_percent_income',
-                            'cb_person_cred_hist_length', 'person_emp_exp', 'credit_score']
+        numeric_features = ['person_income', 'loan_amnt', 'loan_int_rate', 'loan_percent_income',
+                            'person_emp_exp', 'credit_score']
         processed_df[numeric_features] = self.scaler.transform(processed_df[numeric_features])
         features = tensor(processed_df.to_numpy(), dtype=torch.float32)
         state["features"] = features
@@ -58,8 +58,6 @@ if __name__ == "__main__":
     agent = Agent()
     initial_state = Agent.AgentState(
         input_data=pd.DataFrame({
-            'person_age': [25],
-            'person_gender': 'male',
             'person_education': 'Bachelor',
             'person_income': [50000],
             'person_emp_exp': [2],
@@ -68,7 +66,6 @@ if __name__ == "__main__":
             'loan_intent': 'PERSONAL',
             'loan_int_rate': [13.5],
             'loan_percent_income': [0.3],
-            'cb_person_cred_hist_length': [5],
             'credit_score': [700],
             'previous_loan_defaults_on_file': 'No'
         }),

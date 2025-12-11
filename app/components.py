@@ -15,8 +15,6 @@ def initialize_dataframe():
         pd.DataFrame: A single-row DataFrame with default values for the loan application quiz.
     """
     return pd.DataFrame({
-        'person_age': [25],
-        'person_gender': ['male'],
         'person_education': ['High School'],
         'person_income': [50000.0],
         'person_emp_exp': [0],
@@ -25,7 +23,6 @@ def initialize_dataframe():
         'loan_intent': ['HOMEIMPROVEMENT'],
         'loan_int_rate': [10.0],
         'loan_percent_income': [0.2],
-        'cb_person_cred_hist_length': [5.0],
         'credit_score': [500],
         'previous_loan_defaults_on_file': ['No']
     })
@@ -73,34 +70,11 @@ def render_main_page():
             st.markdown('Based on the analysis, we\'ll help you make an informed decision.')
 
 
-# Individual quiz step functions - one question per step
-def render_quiz_step_1():
-    """Question: Person Age"""
-    with st.container(border=True):
-        st.markdown("<h1 style='text-align: center;'>Question 1 of 13</h1>", unsafe_allow_html=True)
-        st.markdown("### Enter your age")
-        st.session_state.collected_data.at[0, 'person_age'] = st.number_input("Age", min_value=18, max_value=100, 
-                                                                         value=int(st.session_state.collected_data.at[0, 'person_age']),
-                                                                         label_visibility='collapsed')
-        render_form_controls()
-
-
-def render_quiz_step_2():
-    """Question: Person Gender"""
-    with st.container(border=True):
-        st.markdown("<h1 style='text-align: center;'>Question 2 of 13</h1>", unsafe_allow_html=True)
-        st.markdown("### Select your gender")
-        current_value = st.session_state.collected_data.at[0, 'person_gender']
-        st.session_state.collected_data.at[0, 'person_gender'] = st.selectbox("Gender", Profile.gender_values(),
-                                                                        index=Profile.gender_values().index(current_value),
-                                                                        label_visibility='collapsed')
-        render_form_controls()
-
 
 def render_quiz_step_3():
     """Question: Person Education"""
     with st.container(border=True):
-        st.markdown("<h1 style='text-align: center;'>Question 3 of 13</h1>", unsafe_allow_html=True)
+        st.markdown("<h1 style='text-align: center;'>Question 2 of 11</h1>", unsafe_allow_html=True)
         st.markdown("### Select your education level")
         current_value = st.session_state.collected_data.at[0, 'person_education']
         st.session_state.collected_data.at[0, 'person_education'] = st.selectbox("Education", Profile.education_values(),
@@ -112,7 +86,7 @@ def render_quiz_step_3():
 def render_quiz_step_4():
     """Question: Person Income"""
     with st.container(border=True):
-        st.markdown("<h1 style='text-align: center;'>Question 4 of 13</h1>", unsafe_allow_html=True)
+        st.markdown("<h1 style='text-align: center;'>Question 3 of 11</h1>", unsafe_allow_html=True)
         st.markdown("### Enter your annual income")
         st.session_state.collected_data.at[0, 'person_income'] = st.number_input("Annual income in $", min_value=0.0,
                                                                            value=float(st.session_state.collected_data.at[0, 'person_income']),
@@ -123,7 +97,7 @@ def render_quiz_step_4():
 def render_quiz_step_5():
     """Question: Person Employment Experience"""
     with st.container(border=True):
-        st.markdown("<h1 style='text-align: center;'>Question 5 of 13</h1>", unsafe_allow_html=True)
+        st.markdown("<h1 style='text-align: center;'>Question 4 of 11</h1>", unsafe_allow_html=True)
         st.markdown("### Select your years of employment experience")
         st.session_state.collected_data.at[0, 'person_emp_exp'] = st.slider('Years of experience',
                                                                         min_value=0, max_value=80,
@@ -136,7 +110,7 @@ def render_quiz_step_5():
 def render_quiz_step_6():
     """Question: Person Home Ownership"""
     with st.container(border=True):
-        st.markdown("<h1 style='text-align: center;'>Question 6 of 13</h1>", unsafe_allow_html=True)
+        st.markdown("<h1 style='text-align: center;'>Question 5 of 11</h1>", unsafe_allow_html=True)
         st.markdown("### Select your home ownership status")
         current_value = st.session_state.collected_data.at[0, 'person_home_ownership']
         st.session_state.collected_data.at[0, 'person_home_ownership'] = st.selectbox("Home ownership", 
@@ -149,7 +123,7 @@ def render_quiz_step_6():
 def render_quiz_step_7():
     """Question: Loan Amount"""
     with st.container(border=True):
-        st.markdown("<h1 style='text-align: center;'>Question 7 of 13</h1>", unsafe_allow_html=True)
+        st.markdown("<h1 style='text-align: center;'>Question 6 of 11</h1>", unsafe_allow_html=True)
         st.markdown("### Enter desired loan amount")
         st.session_state.collected_data.at[0, 'loan_amnt'] = st.number_input("Loan amount in $", min_value=0.0,
                                                                        value=float(st.session_state.collected_data.at[0, 'loan_amnt']),
@@ -160,7 +134,7 @@ def render_quiz_step_7():
 def render_quiz_step_8():
     """Question: Loan Intent"""
     with st.container(border=True):
-        st.markdown("<h1 style='text-align: center;'>Question 8 of 13</h1>", unsafe_allow_html=True)
+        st.markdown("<h1 style='text-align: center;'>Question 7 of 11</h1>", unsafe_allow_html=True)
         st.markdown("### Select your loan intent")
         current_value = st.session_state.collected_data.at[0, 'loan_intent']
         st.session_state.collected_data.at[0, 'loan_intent'] = st.selectbox("Loan intent", Credit.intent_values(),
@@ -172,7 +146,7 @@ def render_quiz_step_8():
 def render_quiz_step_9():
     """Question: Loan Interest Rate"""
     with st.container(border=True):
-        st.markdown("<h1 style='text-align: center;'>Question 9 of 13</h1>", unsafe_allow_html=True)
+        st.markdown("<h1 style='text-align: center;'>Question 8 of 11</h1>", unsafe_allow_html=True)
         st.markdown("### Enter desired loan interest rate")
         st.session_state.collected_data.at[0, 'loan_int_rate'] = st.number_input('Interest rate (%)', min_value=0.0, max_value=100.0,
                                                                            value=float(st.session_state.collected_data.at[0, 'loan_int_rate']),
@@ -183,7 +157,7 @@ def render_quiz_step_9():
 def render_quiz_step_10():
     """Question: Loan Percent Income"""
     with st.container(border=True):
-        st.markdown("<h1 style='text-align: center;'>Question 10 of 13</h1>", unsafe_allow_html=True)
+        st.markdown("<h1 style='text-align: center;'>Question 9 of 11</h1>", unsafe_allow_html=True)
         st.markdown("### Enter loan as percent of your income")
         st.session_state.collected_data.at[0, 'loan_percent_income'] = st.number_input('Loan percent of income (0-1)', 
                                                                                   min_value=0.0, max_value=1.0,
@@ -193,22 +167,10 @@ def render_quiz_step_10():
         render_form_controls()
 
 
-def render_quiz_step_11():
-    """Question: Credit History Length"""
-    with st.container(border=True):
-        st.markdown("<h1 style='text-align: center;'>Question 11 of 13</h1>", unsafe_allow_html=True)
-        st.markdown("### Enter your credit history length")
-        st.session_state.collected_data.at[0, 'cb_person_cred_hist_length'] = st.number_input("Credit history length in years", 
-                                                                                         min_value=0.0,
-                                                                                         value=float(st.session_state.collected_data.at[0, 'cb_person_cred_hist_length']),
-                                                                                         label_visibility='collapsed')
-        render_form_controls()
-
-
 def render_quiz_step_12():
     """Question: Credit Score"""
     with st.container(border=True):
-        st.markdown("<h1 style='text-align: center;'>Question 12 of 13</h1>", unsafe_allow_html=True)
+        st.markdown("<h1 style='text-align: center;'>Question 10 of 11</h1>", unsafe_allow_html=True)
         st.markdown("### Select your credit score")
         st.session_state.collected_data.at[0, 'credit_score'] = st.slider('Credit score',
                                                                     min_value=250, max_value=900,
@@ -221,7 +183,7 @@ def render_quiz_step_12():
 def render_quiz_step_13():
     """Question: Previous Loan Defaults"""
     with st.container(border=True):
-        st.markdown("<h1 style='text-align: center;'>Question 13 of 13</h1>", unsafe_allow_html=True)
+        st.markdown("<h1 style='text-align: center;'>Question 11 of 11</h1>", unsafe_allow_html=True)
         st.markdown("### Do you have previous loan defaults on file?")
         current_value = st.session_state.collected_data.at[0, 'previous_loan_defaults_on_file']
         st.session_state.collected_data.at[0, 'previous_loan_defaults_on_file'] = st.selectbox(
@@ -279,8 +241,6 @@ def render_loan_result():
         
         with subcol_left:
             st.markdown("#### Personal Information")
-            st.metric(label="Age", value=int(st.session_state.collected_data.at[0, 'person_age']))
-            st.metric(label="Gender", value=st.session_state.collected_data.at[0, 'person_gender'])
             st.metric(label="Education", value=st.session_state.collected_data.at[0, 'person_education'])
             st.metric(label="Annual Income", value=f"${st.session_state.collected_data.at[0, 'person_income']:,.2f}")
             st.metric(label="Employment Experience", value=f"{int(st.session_state.collected_data.at[0, 'person_emp_exp'])} years")
@@ -294,7 +254,6 @@ def render_loan_result():
             # Convert loan percent of income (0-1) to percentage (0-100)
             loan_percent_of_income = st.session_state.collected_data.at[0, 'loan_percent_income'] * 100
             st.metric(label="Loan % of Income", value=f"{loan_percent_of_income:.1f}%")
-            st.metric(label="Credit History Length", value=f"{st.session_state.collected_data.at[0, 'cb_person_cred_hist_length']} years")
             st.metric(label="Credit Score", value=int(st.session_state.collected_data.at[0, 'credit_score']))
             st.metric(label="Previous Loan Defaults", value=st.session_state.collected_data.at[0, 'previous_loan_defaults_on_file'])
     

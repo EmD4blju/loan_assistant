@@ -11,17 +11,16 @@ class ModelLoader:
 
     @staticmethod
     def _load_model():
-        model = BaseLoanNN(input_size=13, hidden_layers=nn.ModuleList([nn.Linear(13, 64)]), output_size=1)
-        model.load_state_dict(torch.load(Path(__file__).parent / 'modules' / 'model.pth'))
+        model = torch.load(Path(__file__).parents[2] / 'models' / 'temp_scaled_loan_model.pth', weights_only=False)
         return model
 
     @staticmethod
     def _load_scaler():
-        return joblib.load(Path(__file__).parent / 'modules' / 'numeric_scaler.joblib')
+        return joblib.load(Path(__file__).parents[2] / 'models' / 'feature_scaler.joblib')
 
     @staticmethod
     def _load_categorical_encoders():
-        return joblib.load(Path(__file__).parent / 'modules' / 'categorical_encoders.joblib')
+        return joblib.load(Path(__file__).parents[2] / 'models' / 'feature_encoders.joblib')
 
 
 if __name__ == "__main__":

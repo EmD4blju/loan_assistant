@@ -22,35 +22,27 @@ class Credit:
 
 
 class Profile:
-    def __init__(self, name: str, gender: str, age: int, education: str, experience: float, income: float,
-                 home_ownership: str, credit_score: int, credit_history: float):
+    def __init__(self, name: str, age: int, education: str, experience: float, income: float,
+                 home_ownership: str, credit_score: int):
         self.name = name
-        self.gender = gender
         self.age = age
         self.education = education
         self.experience = experience
         self.income = income
         self.home_ownership = home_ownership
         self.credit_score = credit_score
-        self.credit_history = credit_history
 
     def radar_chart(self):
         chart = RadarChart()
         chart.build([
-            (self.gender, 'Gender', Profile.gender_values()),
             (self.age, 'Age', 'person_age'),
             (self.education, 'Education', Profile.education_values()),
             (self.experience, 'Experience', 'person_emp_exp'),
             (self.income, 'Income', 'person_income'),
             (self.home_ownership, 'Home Ownership', Profile.home_ownership_values()),
             (self.credit_score, 'Credit Score', 'credit_score'),
-            (self.credit_history, 'Credit History', 'cb_person_cred_hist_length')
         ])
         return chart
-
-    @staticmethod
-    def gender_values() -> list:
-        return ["male", "female"]
 
     @staticmethod
     def education_values() -> list:
