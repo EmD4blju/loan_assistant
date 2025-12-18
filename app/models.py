@@ -1,13 +1,12 @@
 import uuid
 from pathlib import Path
-from agent.agent import Agent
 import plotly.express as px
-import pandas as pd
 import streamlit as st
 import plotly.graph_objects as go
 from matplotlib import pyplot as plt
 import pandas as pd
-
+import io
+from PIL import Image
 
 class Credit:
     def __init__(self, name: str, amount: float, intent: str, int_rate: float):
@@ -166,6 +165,13 @@ class GaugeChart:
             width=self.width
         )
         return fig
+
+    def as_image(self,size=(400,400)):
+        buf = io.BytesIO()
+        self.fig.write_image(buf, format="png", width=800, height=600)
+        buf.seek(0)
+        img = Image.open(buf)
+        return img.resize(size)
 
 
 class LineChart:
