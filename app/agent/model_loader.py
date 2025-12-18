@@ -6,22 +6,26 @@ import torch.nn as nn
 from .neural_network import BaseLoanNN
 import joblib
 
-# models
+# Define the absolute path to the project root to locate model files
+PROJECT_ROOT = Path(__file__).parent.parent.parent
 
 class ModelLoader:
 
     @staticmethod
     def _load_model():
-        model = torch.load(Path('models', 'temp_scaled_loan_model.pth'), weights_only=False)
+        model_path = PROJECT_ROOT / 'models' / 'temp_scaled_loan_model.pth'
+        model = torch.load(model_path, weights_only=False)
         return model
 
     @staticmethod
     def _load_scaler():
-        return joblib.load(Path('models', 'feature_scaler.joblib'))
+        scaler_path = PROJECT_ROOT / 'models' / 'feature_scaler.joblib'
+        return joblib.load(scaler_path)
 
     @staticmethod
     def _load_categorical_encoders():
-        return joblib.load(Path('models', 'feature_encoders.joblib'))
+        encoders_path = PROJECT_ROOT / 'models' / 'feature_encoders.joblib'
+        return joblib.load(encoders_path)
 
 
 if __name__ == "__main__":

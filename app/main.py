@@ -1,4 +1,11 @@
 import streamlit as st
+
+import sys
+from pathlib import Path
+
+project_root = Path(__file__).parent.parent
+sys.path.insert(0, str(project_root.parent))
+
 from components import (render_main_page, render_loan_result, 
                         render_quiz_step_1, render_quiz_step_2,
                        render_quiz_step_3,
