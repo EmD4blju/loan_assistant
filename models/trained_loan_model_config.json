@@ -1,0 +1,9 @@
+{
+  "input_size": 10,
+  "hidden_layers": [
+    60,
+    44
+  ],
+  "output_size": 1,
+  "is_temperature_scaled": false
+}
