@@ -295,6 +295,11 @@ def render_gauge(value, force_size=False, size=(225, 225)):
     
 def generate_pdf_report():
     """Generate a comprehensive PDF report with all quiz answers and loan eligibility results."""
+    # Validate session state data exists (defensive check)
+    if st.session_state.loan_confidence is None or st.session_state.collected_data is None:
+        st.error("Unable to generate report: Missing loan data")
+        return
+    
     pdf = fpdf.FPDF()
     pdf.add_page()
     
