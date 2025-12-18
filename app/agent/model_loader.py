@@ -1,10 +1,17 @@
 import sys
 from pathlib import Path
 
+import sys
+from pathlib import Path
 import torch
-import torch.nn as nn
-from .neural_network import BaseLoanNN
 import joblib
+
+# Explicitly import the class required by torch.load
+# This makes the class definition available in the current scope.
+from app.agent.neural_network import BaseLoanNN
+
+# Define the absolute path to the project root to locate model files
+PROJECT_ROOT = Path(__file__).parent.parent.parent
 
 # Define the absolute path to the project root to locate model files
 PROJECT_ROOT = Path(__file__).parent.parent.parent

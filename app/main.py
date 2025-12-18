@@ -1,18 +1,19 @@
 import streamlit as st
-
 import sys
 from pathlib import Path
 
+# Add the project root directory to the Python path
+# The project root is the 'loan_assistant' directory
 project_root = Path(__file__).parent.parent
-sys.path.insert(0, str(project_root.parent))
+sys.path.insert(0, str(project_root))
 
-from components import (render_main_page, render_loan_result, 
+from app.components import (render_main_page, render_loan_result, 
                         render_quiz_step_1, render_quiz_step_2,
                        render_quiz_step_3,
                        render_quiz_step_4, render_quiz_step_5, render_quiz_step_6,
                        render_quiz_step_7, render_quiz_step_8, render_quiz_step_9,
                        render_quiz_step_10, initialize_dataframe)
-from agent.agent import Agent
+from app.agent.agent import Agent
 import pandas as pd
 
 
