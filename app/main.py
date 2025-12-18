@@ -1,10 +1,10 @@
 import streamlit as st
 from components import (render_main_page, render_loan_result, 
+                        render_quiz_step_1, render_quiz_step_2,
                        render_quiz_step_3,
                        render_quiz_step_4, render_quiz_step_5, render_quiz_step_6,
                        render_quiz_step_7, render_quiz_step_8, render_quiz_step_9,
-                       render_quiz_step_10, render_quiz_step_12,
-                       render_quiz_step_13, initialize_dataframe)
+                       render_quiz_step_10, initialize_dataframe)
 from agent.agent import Agent
 import pandas as pd
 
@@ -42,34 +42,34 @@ def main():
 
         # ~ Quiz steps (1-13 questions)        
         case 1:
-            render_quiz_step_3()
+            render_quiz_step_1()
         
         case 2:
-            render_quiz_step_4()
+            render_quiz_step_2()
         
         case 3:
-            render_quiz_step_5()
+            render_quiz_step_3()
         
         case 4:
-            render_quiz_step_6()
+            render_quiz_step_4()
         
         case 5:
-            render_quiz_step_7()
+            render_quiz_step_5()
         
         case 6:
-            render_quiz_step_8()
+            render_quiz_step_6()
         
         case 7:
-            render_quiz_step_9()
+            render_quiz_step_7()
         
         case 8:
-            render_quiz_step_10()
+            render_quiz_step_8()
         
         case 9:
-            render_quiz_step_12()
+            render_quiz_step_9()
         
         case 10:
-            render_quiz_step_13()
+            render_quiz_step_10()
         
         # ~ Invoke model and display result
         case 11:

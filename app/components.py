@@ -1,7 +1,7 @@
 import random
 
 import pandas as pd
-
+import fpdf
 from agent.agent import Agent
 import streamlit as st
 from models import Credit, Profile, RadarChart, GaugeChart, LineChart
@@ -269,8 +269,15 @@ def render_loan_result():
 
     # Button centered below both columns
     with st.container(horizontal=True, horizontal_alignment="center"):
-        if st.button('Download Report', icon='📄', type='primary', use_container_width=False ):
-            pass
+        if st.button('Generate Report', icon='📄', type='primary', use_container_width=False ):
+            generate_pdf_report()
+            with open("loan_report.pdf", "rb") as file:
+                btn = st.download_button(
+                    label="Click here to download your report",
+                    data=file,
+                    file_name="loan_report.pdf",
+                    mime="application/pdf"
+                )
         
         if st.button('Start Over', icon='🔄', type='secondary', use_container_width=False ):
             # Reset to initial state
@@ -285,3 +292,12 @@ def render_gauge(value, force_size=False, size=(225, 225)):
     gauge = GaugeChart(size=size)
     gauge.build(value, label="chance")
     gauge.render(force_size=force_size)
+    
+def generate_pdf_report():
+    pdf = fpdf.FPDF()
+    pdf.add_page()
+    pdf.set_font("Arial", size=12)
+    pdf.cell(200, 10, txt="Loan Eligibility Report", ln=True, align='C')
+    pdf.cell(200, 10, txt=f"Confidence: {st.session_state.loan_confidence}%", ln=True, align='L')
+    # Add more details as needed
+    pdf.output("loan_report.pdf")
