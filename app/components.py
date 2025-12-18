@@ -294,11 +294,26 @@ def render_gauge(value, force_size=False, size=(225, 225)):
     gauge.render(force_size=force_size)
     
 def generate_pdf_report():
-    """Generate a comprehensive PDF report with all quiz answers and loan eligibility results."""
+    """Generate a comprehensive PDF report with all quiz answers and loan eligibility results.
+    
+    The report includes the following sections:
+    - Title and loan approval confidence with color-coded status
+    - Personal Profile: education, income, employment experience, home ownership, credit score
+    - Loan Details: amount, intent, interest rate, loan percent of income
+    - Credit History: previous loan defaults
+    - Footer with attribution
+    
+    Requires st.session_state.loan_confidence and st.session_state.collected_data to be set.
+    """
     # Validate session state data exists (defensive check)
-    if st.session_state.loan_confidence is None or st.session_state.collected_data is None:
+    if (st.session_state.loan_confidence is None or 
+        st.session_state.collected_data is None or 
+        st.session_state.collected_data.empty):
         st.error("Unable to generate report: Missing loan data")
         return
+    
+    # Store reference to row data for efficient access
+    data = st.session_state.collected_data.iloc[0]
     
     pdf = fpdf.FPDF()
     pdf.add_page()
@@ -342,29 +357,29 @@ def generate_pdf_report():
     pdf.set_font("Arial", 'B', size=12)
     pdf.cell(70, 8, txt="Education Level:", ln=False)
     pdf.set_font("Arial", size=12)
-    pdf.cell(0, 8, txt=str(st.session_state.collected_data.at[0, 'person_education']), ln=True)
+    pdf.cell(0, 8, txt=str(data['person_education']), ln=True)
     
     pdf.set_font("Arial", 'B', size=12)
     pdf.cell(70, 8, txt="Annual Income:", ln=False)
     pdf.set_font("Arial", size=12)
-    income = float(st.session_state.collected_data.at[0, 'person_income'])
+    income = float(data['person_income'])
     pdf.cell(0, 8, txt=f"${income:,.2f}", ln=True)
     
     pdf.set_font("Arial", 'B', size=12)
     pdf.cell(70, 8, txt="Employment Experience:", ln=False)
     pdf.set_font("Arial", size=12)
-    emp_exp = int(st.session_state.collected_data.at[0, 'person_emp_exp'])
+    emp_exp = int(data['person_emp_exp'])
     pdf.cell(0, 8, txt=f"{emp_exp} years", ln=True)
     
     pdf.set_font("Arial", 'B', size=12)
     pdf.cell(70, 8, txt="Home Ownership:", ln=False)
     pdf.set_font("Arial", size=12)
-    pdf.cell(0, 8, txt=str(st.session_state.collected_data.at[0, 'person_home_ownership']), ln=True)
+    pdf.cell(0, 8, txt=str(data['person_home_ownership']), ln=True)
     
     pdf.set_font("Arial", 'B', size=12)
     pdf.cell(70, 8, txt="Credit Score:", ln=False)
     pdf.set_font("Arial", size=12)
-    credit_score = int(st.session_state.collected_data.at[0, 'credit_score'])
+    credit_score = int(data['credit_score'])
     pdf.cell(0, 8, txt=str(credit_score), ln=True)
     pdf.ln(5)
     
@@ -377,24 +392,24 @@ def generate_pdf_report():
     pdf.set_font("Arial", 'B', size=12)
     pdf.cell(70, 8, txt="Requested Loan Amount:", ln=False)
     pdf.set_font("Arial", size=12)
-    loan_amount = float(st.session_state.collected_data.at[0, 'loan_amnt'])
+    loan_amount = float(data['loan_amnt'])
     pdf.cell(0, 8, txt=f"${loan_amount:,.2f}", ln=True)
     
     pdf.set_font("Arial", 'B', size=12)
     pdf.cell(70, 8, txt="Loan Intent:", ln=False)
     pdf.set_font("Arial", size=12)
-    pdf.cell(0, 8, txt=str(st.session_state.collected_data.at[0, 'loan_intent']), ln=True)
+    pdf.cell(0, 8, txt=str(data['loan_intent']), ln=True)
     
     pdf.set_font("Arial", 'B', size=12)
     pdf.cell(70, 8, txt="Interest Rate:", ln=False)
     pdf.set_font("Arial", size=12)
-    int_rate = float(st.session_state.collected_data.at[0, 'loan_int_rate'])
+    int_rate = float(data['loan_int_rate'])
     pdf.cell(0, 8, txt=f"{int_rate}%", ln=True)
     
     pdf.set_font("Arial", 'B', size=12)
     pdf.cell(70, 8, txt="Loan as % of Income:", ln=False)
     pdf.set_font("Arial", size=12)
-    loan_percent = float(st.session_state.collected_data.at[0, 'loan_percent_income']) * 100
+    loan_percent = float(data['loan_percent_income']) * 100
     pdf.cell(0, 8, txt=f"{loan_percent:.1f}%", ln=True)
     pdf.ln(5)
     
@@ -407,7 +422,7 @@ def generate_pdf_report():
     pdf.set_font("Arial", 'B', size=12)
     pdf.cell(70, 8, txt="Previous Loan Defaults:", ln=False)
     pdf.set_font("Arial", size=12)
-    defaults = str(st.session_state.collected_data.at[0, 'previous_loan_defaults_on_file'])
+    defaults = str(data['previous_loan_defaults_on_file'])
     pdf.cell(0, 8, txt=defaults, ln=True)
     pdf.ln(10)
     
