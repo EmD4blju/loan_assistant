@@ -1,17 +1,11 @@
 import sys
 from pathlib import Path
-
-import sys
-from pathlib import Path
-import torch
 import joblib
 
-# Explicitly import the class required by torch.load
-# This makes the class definition available in the current scope.
-from app.agent.neural_network import BaseLoanNN
+# Add src to path to import model utilities
+sys.path.insert(0, str(Path(__file__).parent.parent.parent / 'src'))
 
-# Define the absolute path to the project root to locate model files
-PROJECT_ROOT = Path(__file__).parent.parent.parent
+from loan_assistant.models.model_utils import load_model_from_weights
 
 # Define the absolute path to the project root to locate model files
 PROJECT_ROOT = Path(__file__).parent.parent.parent
@@ -20,9 +14,10 @@ class ModelLoader:
 
     @staticmethod
     def _load_model():
+        """Load model by reconstructing architecture from config and loading weights."""
         model_path = PROJECT_ROOT / 'models' / 'temp_scaled_loan_model.pth'
-        model = torch.load(model_path, weights_only=False)
-        return model
+        config_path = PROJECT_ROOT / 'models' / 'temp_scaled_loan_model_config.json'
+        return load_model_from_weights(model_path, config_path)
 
     @staticmethod
     def _load_scaler():
