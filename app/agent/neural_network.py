@@ -18,12 +18,6 @@ class BaseLoanNN(nn.Module):
         if len(self.hidden_layers) > 0:
             # The input of the output layer is the output of the last hidden layer
             output_layer_input_dim = self.hidden_layers[-1].out_features
-            # if isinstance(last_hidden_layer, nn.Linear):
-            #     output_layer_input_dim = last_hidden_layer.out_features
-            # else:
-            #     # Fallback for non-linear layers, though we expect Linear
-            #     # This might need adjustment based on layer types used
-            #     output_layer_input_dim = self.hidden_layers[-1].out_features
         else:
             # No hidden layers, output layer takes the main input
             output_layer_input_dim = input_size

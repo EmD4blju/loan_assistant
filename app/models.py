@@ -74,7 +74,7 @@ class RadarChart:
         df = pd.DataFrame(dict(r=self.r, theta=self.theta))
         self.fig = px.line_polar(df, r='r', theta='theta', line_close=True)
         self.fig.update_traces(fill='toself')
-        st.plotly_chart(self.fig, use_container_width=True,
+        st.plotly_chart(self.fig, width='stretch',
                         key=f'radar_{st.session_state.chart_key + 1}_{uuid.uuid4()}')
         st.session_state.chart_key += 1
         return self.fig
@@ -116,12 +116,12 @@ class GaugeChart:
         if force_size:
             st.plotly_chart(
                 self.fig,
-                use_container_width=False,
+                width='content',
                 config={"displayModeBar": False},
                 key=key
             )
         else:
-            st.plotly_chart(self.fig, use_container_width=True, key=key)
+            st.plotly_chart(self.fig, width='stretch', key=key)
             st.session_state.chart_key += 1
         return self.fig
 

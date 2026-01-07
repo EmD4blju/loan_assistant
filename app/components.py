@@ -278,10 +278,10 @@ def render_loan_result():
                 mime="application/pdf",
                 icon='📄',
                 type='primary',
-                use_container_width=False
+                width='content'
             )
         
-        if st.button('Start Over', icon='🔄', type='secondary', use_container_width=False ):
+        if st.button('Start Over', icon='🔄', type='secondary', width='content' ):
             # Reset to initial state
             st.session_state.step = 0
             st.session_state.collected_data = initialize_dataframe()
