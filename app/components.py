@@ -268,6 +268,7 @@ def render_loan_result():
                     st.metric(label="Previous Loan Defaults", value=st.session_state.collected_data.at[0, 'previous_loan_defaults_on_file'])
 
     # Button centered below both columns
+    st.markdown("Download your comprehensive loan report with **AI-generated recommendations**", text_alignment="center")
     with st.container(horizontal=True, horizontal_alignment="center"):
         generate_pdf_report()
         with open("loan_report.pdf", "rb") as file:
@@ -427,6 +428,16 @@ def generate_pdf_report():
     defaults = str(data['previous_loan_defaults_on_file'])
     pdf.cell(0, 8, txt=defaults, ln=True)
     pdf.ln(10)
+    
+    # Recommendations Section
+    pdf.add_page()
+    pdf.set_font("Arial", 'B', size=16)
+    pdf.cell(0, 10, txt="Recommendations", ln=True)
+    pdf.line(10, pdf.get_y(), 200, pdf.get_y())
+    pdf.ln(5)
+    pdf.set_font("Arial", size=12)
+    recommendations = st.session_state.get('recommendations', 'No recommendations available.')
+    pdf.multi_cell(0, 8, txt=recommendations)
     
     # Footer Section
     pdf.set_font("Arial", 'I', size=10)

@@ -89,9 +89,13 @@ def main():
             initial_state = Agent.AgentState(
                 input_data=st.session_state.collected_data,
                 loan_confidence=0.0,
+                recommendations=""
             )
             
-            st.session_state.loan_confidence = st.session_state.agent.invoke(initial_state)['loan_confidence']
+            output_state = st.session_state.agent.invoke(initial_state)
+            
+            st.session_state.loan_confidence = output_state['loan_confidence']
+            st.session_state.recommendations = output_state['recommendations']
             
             # Move to result page
             st.session_state.step = 15
