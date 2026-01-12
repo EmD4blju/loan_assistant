@@ -66,7 +66,7 @@ class Agent():
                             Given the loan confidence score and user profile, suggest actionable recommendations to improve their chances of loan approval.
                             Suggestions should reference only the provided data.
                             Always respond in a concise manner and focus on practical advice.
-                            Format your response as a bulleted list in a markdown format.
+                            Format your response as a bulleted list but not in markdown format.
                             """
                         ),
             HumanMessage(content=f"""

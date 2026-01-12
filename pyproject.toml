@@ -28,8 +28,8 @@ dependencies = [
     "kedro-datasets>=9.0.0",
     "langgraph>=1.0.4",
     "plotly>=6.5.0",
-    "fpdf>=1.7.2",
     "langchain-ollama>=1.0.1",
+    "fpdf2>=2.8.5",
 ]
 
 [project.scripts]
